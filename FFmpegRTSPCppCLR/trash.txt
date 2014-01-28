@@ -1,0 +1,1248 @@
+
+//#pragma include_alias( "libavformat/avformat.h" ,"C:\ffmpeg\include\libavformat\avformat.h" )
+//#pragma include_alias( "libavcodec/avcodec.h", "C:\ffmpeg\include\libavcodec\avcodec.h"  )
+//#pragma include_alias( "libavutil/avutil.h", "C:\ffmpeg\include\libavutil\avutil.h"  )
+
+//void FFmpegMedia::AudioDataEncode(){
+//	AVPacket out_audio_packet;
+//	int got_output;
+
+//	av_init_packet(&out_audio_packet);
+//	out_audio_packet.data = NULL;    
+//	out_audio_packet.size = 0;
+
+//	int ret = avcodec_encode_audio2(out_audio_codec_context, &out_audio_packet, in_audio_frame, &got_output);
+//	if (ret < 0) {
+//		throw gcnew Exception(L"Error encoding audio frame");
+//	}
+
+//	if (got_output) {
+//		//if (out_audio_codec_context->coded_frame->pts != AV_NOPTS_VALUE)
+//		//	out_audio_packet.pts = av_rescale_q(out_audio_codec_context->coded_frame->pts, out_audio_codec_context->time_base, audio_stream->time_base);
+//		out_audio_packet.pts=msecAudioTimeInterval;
+//		out_audio_packet.dts=msecAudioTimeInterval;
+//		//out_audio_packet.duration= (unsigned long)(timeInterval * 1000);
+
+//		//if (out_audio_codec_context->coded_frame->key_frame)
+//		//	out_audio_packet.flags |= AV_PKT_FLAG_KEY;
+
+//		out_audio_packet.stream_index = audio_stream->index;
+
+//		//int ret = av_interleaved_write_frame(out_format_context, &out_audio_packet);
+//		int ret = av_write_frame(out_format_context, &out_audio_packet);
+//		if (ret < 0) {
+//			throw gcnew Exception(L"Error while write audio");
+//		} 
+//		av_free_packet(&out_audio_packet);
+//	}
+//}
+//void FFmpegMedia::VideoDataEncode()
+//{
+//	int retval = sws_scale(out_img_convert_context,  in_video_frame->data, in_video_frame->linesize,
+//		0, in_video_frame->height, mpeg_frame->data, mpeg_frame->linesize);
+
+//	AVPacket out_video_packet;
+
+//	int got_output;
+
+//	av_init_packet(&out_video_packet);
+//	out_video_packet.data = NULL; 
+//	out_video_packet.size = 0;
+//	out_video_packet.pts=msecTimeInterval;
+//	out_video_packet.dts=msecTimeInterval;
+
+//	int ret = avcodec_encode_video2(out_video_codec_context, &out_video_packet, mpeg_frame, &got_output);
+//	if (ret < 0) {
+//		throw gcnew Exception(L"Error while encode video");
+//	}
+//	if (got_output) {
+//		//if (out_video_codec_context->coded_frame->pts != AV_NOPTS_VALUE)
+//		//	out_video_packet.pts = av_rescale_q(out_video_codec_context->coded_frame->pts, out_video_codec_context->time_base, video_stream->time_base);
+//		out_video_packet.pts=msecTimeInterval;
+//		out_video_packet.dts=msecTimeInterval;
+
+//		if (out_video_codec_context->coded_frame->key_frame)
+//			out_video_packet.flags |= AV_PKT_FLAG_KEY;
+
+//		out_video_packet.stream_index = video_stream->index;
+
+//		//int ret = av_interleaved_write_frame(out_format_context, &out_video_packet);
+//		ret = av_write_frame(out_format_context, &out_video_packet);
+//		if (ret < 0) {
+//			throw gcnew Exception(L"Error while write video");
+//		}
+//	}
+//	av_free_packet(&out_video_packet);
+//}
+
+//int select_channel_layout(AVCodec *codec)
+//{
+//	const uint64_t *p;
+//	uint64_t best_ch_layout = 0;
+//	int best_nb_channells   = 0;
+
+//	if (!codec->channel_layouts)
+//		return AV_CH_LAYOUT_STEREO;
+
+//	p = codec->channel_layouts;
+//	while (*p) {
+//		int nb_channels = av_get_channel_layout_nb_channels(*p);
+
+//		if (nb_channels > best_nb_channells) {
+//			best_ch_layout    = *p;
+//			best_nb_channells = nb_channels;
+//		}
+//		p++;
+//	}
+//	return best_ch_layout;
+//}
+
+//int select_sample_rate(AVCodec *codec)
+//{
+//	const int *p;
+//	int best_samplerate = 0;
+
+//	if (!codec->supported_samplerates)
+//		return 44100;
+
+//	p = codec->supported_samplerates;
+//	while (*p) 
+//	{
+//		best_samplerate = FFMAX(*p, best_samplerate);
+//		p++;
+//	}
+//	return best_samplerate;
+//}
+//out_audio_codec_context->codec_id = AV_CODEC_ID_PCM_MULAW;
+//out_audio_codec_context->sample_fmt = AV_SAMPLE_FMT_S16;   
+//out_audio_codec_context->bit_rate = 64000;
+//out_audio_codec_context->sample_rate = 8000;
+//out_audio_codec_context->channels    = 1;
+
+//out_audio_codec_context->codec_id = AV_CODEC_ID_MP3;
+//out_audio_codec_context->sample_fmt = AV_SAMPLE_FMT_S16;   
+//out_audio_codec_context->bit_rate = 128000;
+//out_audio_codec_context->sample_rate = 8000;
+//out_audio_codec_context->channels    = 1;
+//out_audio_codec_context->frame_size=320;
+
+//out_audio_codec_context->codec_id = AV_CODEC_ID_AC3;
+//out_audio_codec_context->sample_fmt = AV_SAMPLE_FMT_FLTP;   
+//out_audio_codec_context->bit_rate = 64000;
+//out_audio_codec_context->sample_rate = 16000;
+//out_audio_codec_context->channels    = 1;
+
+//out_audio_codec_context->channel_layout=av_get_channel_layout("mono");
+
+//out_audio_codec_context->frame_size=640;
+
+//out_audio_codec_context->codec_id =AV_CODEC_ID_VORBIS;
+//out_audio_codec_context->sample_fmt =AV_SAMPLE_FMT_FLTP; //AV_SAMPLE_FMT_S16;
+
+//out_audio_codec_context->sample_rate = 16000;//SelectSampleRate(out_audio_codec);//8000;
+//out_audio_codec_context->channels    = 2;
+
+//out_audio_codec_context->bit_rate =0;//out_audio_codec_context->sample_rate*out_audio_codec_context->channels*16 ;
+//out_audio_codec_context->frame_size=320;
+
+//out_audio_codec_context->channel_layout=av_get_channel_layout("mono");
+
+
+//out_audio_codec_context->codec_id =AV_CODEC_ID_AAC;
+//
+//out_audio_codec_context->sample_fmt =AV_SAMPLE_FMT_S16;
+
+
+//out_audio_codec_context->sample_rate = 16000;//SelectSampleRate(out_audio_codec);//8000;
+//out_audio_codec_context->channels    =1 ;
+
+//out_audio_codec_context->bit_rate =8000;//4000
+//out_audio_codec_context->profile = FF_PROFILE_AAC_LOW;
+////out_audio_codec_context->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
+
+////out_audio_codec_context->frame_size=256;
+////out_audio_codec_context->channel_layout=4;
+
+
+
+
+
+
+//void FFmpegMedia::LoggerInit(void *, int level, const char * szFmt, va_list varg){
+
+//	//String ^ sizeFormat = Marshal::PtrToStringAnsi((IntPtr) (char *) szFmt);
+//	//String ^ args = Marshal::PtrToStringAnsi((IntPtr) (va_list) varg);
+//	////...
+//}
+
+//void FFmpegWrapper::FFmpegMedia::CloseOutputFile(){
+//	av_write_trailer(out_format_context);
+//	avcodec_close(out_video_codec_context);
+//    avio_close(out_format_context->pb);
+//
+//}
+//
+//void FFmpegWrapper::FFmpegMedia::AVCodecClose(){
+//	avcodec_close(in_video_codec_context);
+//}
+//
+//void FFmpegWrapper::FFmpegMedia::SwsFreeContext(){
+//	sws_freeContext(img_convert_context);
+//}
+//
+//void FFmpegWrapper::FFmpegMedia::AVFormatNetworkDeinit(){
+//	avformat_network_deinit();
+//}
+//void FFmpegWrapper::FFmpegMedia::AVFormatCloseInput(){
+//
+//	cli::pin_ptr<AVFormatContext*> p=&in_format_context;
+//	avformat_close_input(p);
+//
+//}
+//
+//void FFmpegWrapper::FFmpegMedia::SDLQuit(){
+//	SDL_Quit();
+//}
+//
+//
+//void FFmpegWrapper::FFmpegMedia::Close(){
+//	exit=true;
+//}
+
+
+
+
+//
+//void FFmpegWrapper::FFmpegMedia::AVRegisterAll(){
+//
+//	av_register_all();
+//}
+//void FFmpegWrapper::FFmpegMedia::AVFormatNetworkInit(){
+//
+//	avformat_network_init();
+//}
+//void FFmpegWrapper::FFmpegMedia::AVFormatOpenInput(){
+//
+//	cli::pin_ptr<AVFormatContext*> p_format_context=&in_format_context;
+//	//AVFormatContext* p=NULL;
+//	int result = avformat_open_input(p_format_context, 
+//		(char*) ((Marshal::StringToHGlobalAnsi (mediaSource)).ToPointer ()), 
+//		NULL, NULL);
+//
+//	if (result < 0) 
+//		throw gcnew Exception(L"ffmpeg: Unable to open input file");
+//
+//}
+//void FFmpegWrapper::FFmpegMedia::AVFormatFindStreamInfo(){
+//
+//	int result = avformat_find_stream_info(in_format_context, NULL);
+//
+//	if (result < 0) 
+//		throw gcnew Exception(L"ffmpeg: Unable to find stream info");
+//
+//	video_stream_index=-1;
+//	video_stream_index=-1;
+//
+//	int index;
+//	for (index = 0; index < in_format_context->nb_streams; ++index) {
+//		if (in_format_context->streams[index]->codec->codec_type == AVMEDIA_TYPE_VIDEO && video_stream_index<0) {
+//			video_stream_index=index;
+//			break;
+//		}
+//	}
+//
+//	for (index = 0; index < in_format_context->nb_streams; ++index) {
+//		if(in_format_context->streams[index]->codec->codec_type==AVMEDIA_TYPE_AUDIO && audio_stream_index < 0) {
+//			audio_stream_index=index;
+//			break;
+//		}
+//	}
+//
+//	//if (index == in_format_context->nb_streams) 
+//	//	throw gcnew Exception(L"ffmpeg: Unable to find av stream info ");
+//
+//
+//}
+//void FFmpegWrapper::FFmpegMedia::AVCodecOpen2(){
+//
+//
+//	in_video_codec_context = in_format_context->streams[video_stream_index]->codec;
+//	in_video_codec = avcodec_find_decoder(in_video_codec_context->codec_id);
+//
+//	//if(in_video_codec->capabilities & CODEC_CAP_TRUNCATED)
+//	//in_video_codec_context->flags|=CODEC_FLAG_TRUNCATED;
+//
+//	//if (in_video_codec_context->codec_id == CODEC_ID_H264){
+//	//	in_video_codec_context->flags2 |= CODEC_FLAG2_CHUNKS;
+//	//}
+//	//in_video_codec_context->flags |=CODEC_FLAG_GLOBAL_HEADER;
+//
+//	int video_result = avcodec_open2(in_video_codec_context, in_video_codec, NULL);
+//
+//	if (video_result < 0) 
+//		throw gcnew Exception(L"ffmpeg: Unable to open video codec");
+//
+//
+//	//audio_codec_context = in_format_context->streams[audio_stream]->codec;
+//	//audio_codec = avcodec_find_decoder(audio_codec_context->codec_id);
+//
+//	//int audio_result = avcodec_open2(audio_codec_context, audio_codec, NULL);
+//
+//	//if (audio_result < 0) 
+//	//	throw gcnew Exception(L"ffmpeg: Unable to open audio codec");
+//
+//}
+//void FFmpegWrapper::FFmpegMedia::SDLInitVideo(){
+//
+//	int result = SDL_Init(SDL_INIT_VIDEO);
+//	if (result < 0) 
+//		throw gcnew Exception(L"Unable to init SDL: ");//, SDL_GetError());
+//
+//	screen = SDL_SetVideoMode(in_video_codec_context->width, in_video_codec_context->height, 0, 0);
+//	if (screen == NULL)
+//		throw gcnew Exception(L"Couldn't set video mode");
+//
+//	bmp = SDL_CreateYUVOverlay(in_video_codec_context->width, in_video_codec_context->height,
+//		SDL_YV12_OVERLAY, screen);
+//
+//}
+//
+//int  FFmpegWrapper::FFmpegMedia::ShowVideo(){
+//
+//	AVFrame* frame = avcodec_alloc_frame();
+//	AVPacket packet;
+//
+//	while (av_read_frame(in_format_context, &packet) >= 0) {
+//		if (packet.stream_index == video_stream_index) {
+//			int frame_finished;
+//			int result =avcodec_decode_video2(in_video_codec_context, frame, &frame_finished, &packet);
+//			if(result<0){
+//				//exit(1);
+//				throw gcnew Exception(L"Error while decoding");			
+//			}
+//			if (frame_finished) {
+//				SDL_LockYUVOverlay(bmp);
+//
+//				AVPicture pict;
+//				pict.data[0] = bmp->pixels[0];
+//				pict.data[1] = bmp->pixels[2]; 
+//				pict.data[2] = bmp->pixels[1];
+//
+//				pict.linesize[0] = bmp->pitches[0];
+//				pict.linesize[1] = bmp->pitches[2];
+//				pict.linesize[2] = bmp->pitches[1];
+//
+//				sws_scale(img_convert_context,frame->data, frame->linesize,0,
+//					in_video_codec_context->height,pict.data, pict.linesize);
+//
+//				SDL_UnlockYUVOverlay(bmp);
+//				SDL_Rect rect;
+//				rect.x = 0;
+//				rect.y = 0;
+//				rect.w = in_video_codec_context->width;
+//				rect.h = in_video_codec_context->height;
+//				SDL_DisplayYUVOverlay(bmp, &rect);
+//			}
+//		}
+//		av_free_packet(&packet);
+//
+//		SDL_Event event;
+//		if (SDL_PollEvent(&event)) {
+//			if (event.type == SDL_QUIT) {
+//				break;
+//			}
+//		}
+//	}
+//	av_free(frame);
+//}
+//void FFmpegWrapper::FFmpegMedia::GetAVFrame(){
+//
+//	exit=false;
+//
+//	AVPacket packet;
+//
+//	AVFrame* frame = avcodec_alloc_frame();
+//	AVFrame *rgb_frame = avcodec_alloc_frame();
+//
+//	uint8_t *buffer;
+//	int rgb_frame_size = avpicture_get_size(PIX_FMT_RGB24, in_video_codec_context->width, in_video_codec_context->height);
+//	buffer=(uint8_t *)av_malloc(rgb_frame_size*sizeof(uint8_t));
+//	avpicture_fill((AVPicture *)rgb_frame, buffer, PIX_FMT_RGB24, in_video_codec_context->width, in_video_codec_context->height);
+//
+//	//Bitmap^ bitmap = gcnew  Bitmap(in_video_codec_context->width, in_video_codec_context->height, Imaging::PixelFormat::Format24bppRgb);
+//	//Rectangle rect = Rectangle(0,0,bitmap->Width,bitmap->Height);
+//	while (av_read_frame(in_format_context, &packet) >= 0) {
+//		if(exit)
+//			break;
+//
+//		if (packet.stream_index == video_stream_index) {
+//
+//			int got_video_frame;
+//			int result =avcodec_decode_video2(in_video_codec_context, frame, &got_video_frame, &packet);
+//
+//			if(result<0){
+//				throw gcnew Exception(L"Error while decoding");			
+//			}
+//			//PacketReceived((IntPtr)packet.data, packet.size);
+//			if (got_video_frame) {
+//
+//				//BitmapData^ bmpData =bitmap->LockBits(rect, ImageLockMode::ReadWrite, bitmap->PixelFormat);
+//				//avvideo_frame_fill((AVvideo_frame *)rgb_frame, reinterpret_cast<uint8_t*>(bmpData->Scan0.ToPointer()), PIX_FMT_RGB24, in_video_codec_context->width, in_video_codec_context->height);
+//
+//				sws_scale(img_convert_context, frame->data, frame->linesize, 0, frame->height, rgb_frame->data, rgb_frame->linesize);
+//
+//				VideoFrameReceived((IntPtr)(rgb_frame->data[0]), rgb_frame->linesize[0], in_video_codec_context->width, in_video_codec_context->height);
+//
+//				//bitmap->UnlockBits(bmpData);
+//				//VideoFrameReceived(bitmap);
+//
+//			}
+//		}
+//
+//		else if (packet.stream_index == audio_stream_index) {
+//
+//			int got_audio_frame;
+//			int audio_result = avcodec_decode_audio4(audio_codec_context, frame, &got_audio_frame, &packet);
+//
+//			if (audio_result < 0) {
+//				throw gcnew Exception(L"Error while decoding audio ");
+//			}
+//			if (got_audio_frame) {
+//
+//				int data_size = av_samples_get_buffer_size(NULL, audio_codec_context->channels,
+//					frame->nb_samples,audio_codec_context->sample_fmt, 1);
+//
+//				int size=data_size*sizeof(uint8_t);
+//				IntPtr ptr=(IntPtr)(frame->data[0]);
+//
+//				AudioFrameReceived((IntPtr)(frame->data[0]), frame->linesize[0]);
+//				//audioHandler(ptr, frame->linesize[0]);
+//
+//			}
+//		}
+//
+//		av_free_packet(&packet);
+//
+//	}
+//	av_free(buffer);
+//	//delete bitmap;
+//	av_free(frame);
+//	av_free(rgb_frame);
+//
+//}
+
+
+//void  FFmpegWrapper::FFmpegMedia::AVFormatOpenOutput(){
+//
+//	av_register_all();
+//
+//	cli::pin_ptr<AVFormatContext*> p_out_format_context=&out_format_context;
+//
+//	int result=avformat_alloc_output_context2(p_out_format_context, 
+//		NULL, 
+//		NULL,
+//		(char*) ((Marshal::StringToHGlobalAnsi (outMediaSource)).ToPointer ()));
+//
+//	if (result < 0) 
+//		throw gcnew Exception(L"ffmpeg: Unable to open output file");
+//
+//
+//
+//	output_format =out_format_context->oformat;
+//	//out_format_context->
+//
+//	video_stream = NULL;
+//
+//	cli::pin_ptr<AVCodec*> p_video_codec=&in_video_codec;
+//
+//	if (output_format->video_codec != AV_CODEC_ID_NONE) {
+//        video_stream = add_video_stream(out_format_context, p_video_codec, output_format->video_codec);
+//    }
+//
+//	//if (video_stream)
+//	//	open_video(out_format_context, in_video_codec, video_stream);
+//
+//		if (avio_open(&out_format_context->pb, 
+//		(char*) ((Marshal::StringToHGlobalAnsi (outMediaSource)).ToPointer ()), 
+//		AVIO_FLAG_WRITE) < 0) {
+//			throw gcnew Exception(L"ffmpeg: Unable to open output file");
+//        }
+//}
+//
+//AVStream *  FFmpegWrapper::FFmpegMedia::add_video_stream(AVFormatContext *oc, AVCodec **codec, enum AVCodecID codec_id)
+//{
+//    AVCodecContext *c;
+//    AVStream *st;
+//
+//    /* find the video encoder */
+//    *codec = avcodec_find_encoder(codec_id);
+//    if (!(*codec)) {
+//		throw gcnew Exception(L"ffmpeg: codec not found");
+//        //fprintf(stderr, "codec not found\n");
+//        //exit(1);
+//    }
+//
+//    st = avformat_new_stream(oc, *codec);
+//    if (!st) {
+//		throw gcnew Exception(L"ffmpeg: could not alloc stream");
+//        //fprintf(stderr, "Could not alloc stream\n");
+//        //exit(1);
+//    }
+//
+//    c = st->codec;
+//
+//    avcodec_get_context_defaults3(c, *codec);
+//
+//    c->codec_id = codec_id;
+//
+//    /* Put sample parameters. */
+//    c->bit_rate = 1000000;
+//    /* Resolution must be a multiple of two. */
+//    c->width    = 640;
+//    c->height   = 480;
+//    /* timebase: This is the fundamental unit of time (in seconds) in terms
+//     * of which frame timestamps are represented. For fixed-fps content,
+//     * timebase should be 1/framerate and timestamp increments should be
+//     * identical to 1. */
+//    //c->time_base.den = 25;
+//    //c->time_base.num = 1;
+//    //c->gop_size      = 12; /* emit one intra frame every twelve frames at most */
+//    c->pix_fmt       = PIX_FMT_YUV420P;
+//
+//    //if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO) {
+//    //    /* just for testing, we also add B frames */
+//    //    c->max_b_frames = 2;
+//    //}
+//    //if (c->codec_id == AV_CODEC_ID_MPEG1VIDEO) {
+//    //    /* Needed to avoid using macroblocks in which some coeffs overflow.
+//    //     * This does not happen with normal video, it just happens here as
+//    //     * the motion of the chroma plane does not match the luma plane. */
+//    //    c->mb_decision = 2;
+//    //}
+//
+//    /* Some formats want stream headers to be separate. */
+//    if (oc->oformat->flags & AVFMT_GLOBALHEADER)
+//        c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+//
+//    return st;
+//}
+//
+//
+//int FFmpegWrapper::FFmpegMedia::create_out_file(char *filename) {
+//    // Allocate output format context
+//    out_format_context = avformat_alloc_context();
+//    out_format_context->oformat = av_guess_format(NULL, filename, NULL);
+//    if (out_format_context->oformat == NULL)
+//    {
+//        fprintf(stderr, "Could not guess output format\n");
+//		return -1;
+//       // exit(1);
+//    }
+//
+//    printf(out_format_context->filename, sizeof(out_format_context->filename), "%s", filename);
+//
+//    out_video_stream = av_new_stream(out_format_context, 0);
+//    if (!out_video_stream) {
+//        fprintf(stderr, "Could not alloc stream\n");
+//		return -1;
+//        //exit(1);
+//    }
+//	    // Set encoding options
+//    out_video_codec_context = out_video_stream->codec;
+//    out_video_codec_context->codec_id = AV_CODEC_ID_MPEG4;
+//    out_video_codec_context->codec_type = AVMEDIA_TYPE_VIDEO;
+//    out_video_codec_context->bit_rate = 10000000;
+//    //out_video_codec_context->crf = 10;
+//    out_video_codec_context->width = in_video_codec_context->width;
+//    out_video_codec_context->height = in_video_codec_context->height;
+//    out_video_codec_context->time_base.den = 30000;//in_video_codec_context->time_base.den;
+//    out_video_codec_context->time_base.num = 1;//in_video_codec_context->time_base.num;
+//    /*out_video_codec_context->gop_size = 30;*/
+//    out_video_codec_context->pix_fmt = PIX_FMT_YUV420P;
+//    //out_video_codec_context->thread_count = 4;
+//
+//    if(out_format_context->oformat->flags & AVFMT_GLOBALHEADER)
+//        out_video_codec_context->flags |= CODEC_FLAG_GLOBAL_HEADER;
+//
+//    // Find the encoder for the video stream
+//    out_video_codec = avcodec_find_encoder(out_video_codec_context->codec_id);
+//    if(out_video_codec == NULL) {
+//        fprintf(stderr, "Unsupported output codec!\n");
+//        return -1; // Codec not found
+//    }
+//    // Open codec
+//    if(avcodec_open(out_video_codec_context, out_video_codec) < 0)
+//        return -1; // Could not open codec
+//
+//    avio_open(&out_format_context->pb, filename, AVIO_FLAG_WRITE);
+//    avformat_write_header(out_format_context, NULL);
+//
+//    return 0;
+//}
+
+
+
+
+//ref struct WriterPrivateData
+//{
+//public:
+//	AVFormatContext*		FormatContext;
+//	AVStream*			VideoStream;
+//	AVFrame*				VideoFrame;
+//	struct SwsContext*	ConvertContext;
+//	struct SwsContext*	ConvertContextGrayscale;
+//
+//	uint8_t*	VideoOutputBuffer;
+//	int VideoOutputBufferSize;
+//
+//	WriterPrivateData( )
+//	{
+//		FormatContext     = NULL;
+//		VideoStream       = NULL;
+//		VideoFrame        = NULL;
+//		ConvertContext	  = NULL;
+//		ConvertContextGrayscale = NULL;
+//		VideoOutputBuffer = NULL;
+//	}
+//};
+//
+//void Open( String^ fileName, int width, int height, int frameRate, VideoCodec codec, int bitRate )
+//{
+//    CheckIfDisposed( );
+//
+//	// close previous file if any open
+//	Close( );
+//
+//	data = gcnew WriterPrivateData( );
+//	bool success = false;
+//
+//	// check width and height
+//	if ( ( ( width & 1 ) != 0 ) || ( ( height & 1 ) != 0 ) )
+//	{
+//		throw gcnew ArgumentException( "Video file resolution must be a multiple of two." );
+//	}
+//
+//	// check video codec
+//	if ( ( (int) codec < -1 ) || ( (int) codec >= CODECS_COUNT ) )
+//	{
+//		throw gcnew ArgumentException( "Invalid video codec is specified." );
+//	}
+//
+//	m_width  = width;
+//	m_height = height;
+//	m_codec  = codec;
+//	m_frameRate = frameRate;
+//	m_bitRate = bitRate;
+//	
+//	// convert specified managed String to unmanaged string
+//	IntPtr ptr = System::Runtime::InteropServices::Marshal::StringToHGlobalUni( fileName );
+//    wchar_t* nativeFileNameUnicode = (wchar_t*) ptr.ToPointer( );
+//    int utf8StringSize = WideCharToMultiByte( CP_UTF8, 0, nativeFileNameUnicode, -1, NULL, 0, NULL, NULL );
+//    char* nativeFileName = new char[utf8StringSize];
+//    WideCharToMultiByte( CP_UTF8, 0, nativeFileNameUnicode, -1, nativeFileName, utf8StringSize, NULL, NULL );
+//
+//	try
+//	{
+//		// gues about destination file format from its file name
+//		libffmpeg::AVOutputFormat* outputFormat = libffmpeg::av_guess_format( NULL, nativeFileName, NULL );
+//
+//		if ( !outputFormat )
+//		{
+//			// gues about destination file format from its short name
+//			outputFormat = libffmpeg::av_guess_format( "mpeg", NULL, NULL );
+//
+//			if ( !outputFormat )
+//			{
+//				throw gcnew Exception( "Cannot find suitable output format." );
+//			}
+//		}
+//
+//		// prepare format context
+//		data->FormatContext = libffmpeg::avformat_alloc_context( );
+//
+//		if ( !data->FormatContext )
+//		{
+//			throw gcnew Exception( "Cannot allocate format context." );
+//		}
+//		data->FormatContext->oformat = outputFormat;
+//
+//		// add video stream using the specified video codec
+//		add_video_stream( data, width, height, frameRate, bitRate,
+//			( codec == VideoCodec::Default ) ? outputFormat->in_video_codec : (libffmpeg::CodecID) video_codecs[(int) codec],
+//			( codec == VideoCodec::Default ) ? libffmpeg::PIX_FMT_YUV420P : (libffmpeg::PixelFormat) pixel_formats[(int) codec] );
+//
+//		// set the output parameters (must be done even if no parameters)
+//		if ( libffmpeg::av_set_parameters( data->FormatContext, NULL ) < 0 )
+//		{
+//			throw gcnew Exception( "Failed configuring format context." );
+//		}
+//
+//		open_video( data );
+//
+//		// open output file
+//		if ( !( outputFormat->flags & AVFMT_NOFILE ) )
+//		{
+//			if ( libffmpeg::avio_open( &data->FormatContext->pb, nativeFileName, AVIO_FLAG_WRITE ) < 0 )
+//			{
+//				throw gcnew System::IO::IOException( "Cannot open the video file." );
+//			}
+//		}
+//
+//		libffmpeg::av_write_header( data->FormatContext );
+//
+//		success = true;
+//	}
+//	finally
+//	{
+//		System::Runtime::InteropServices::Marshal::FreeHGlobal( ptr );
+//        delete [] nativeFileName;
+//
+//		if ( !success )
+//		{
+//			Close( );
+//		}
+//	}
+//}
+//
+//
+//
+//
+//
+//
+//
+//AVFrame* alloc_video_frame( enum PixelFormat pix_fmt, int width, int height )
+//{
+//	AVFrame* video_frame;
+//	void* video_frame_buf;
+//	int size;
+//
+//	video_frame = avcodec_alloc_frame( );
+//	if ( !video_frame )
+//	{
+//		return NULL;
+//	}
+//
+//	size = avvideo_frame_get_size( pix_fmt, width, height );
+//	video_frame_buf = av_malloc( size );
+//	if ( !video_frame_buf )
+//	{
+//		av_free( video_frame );
+//		return NULL;
+//	}
+//
+//	avvideo_frame_fill( (AVvideo_frame *) video_frame, (uint8_t *) video_frame_buf, pix_fmt, width, height );
+//
+//	return video_frame;
+//}
+//
+//void open_video( WriterPrivateData^ data )
+//{
+//	AVCodecContext* codecContext = data->VideoStream->codec;
+//	AVCodec* codec = avcodec_find_encoder( codecContext->codec_id );
+//
+//	if ( !codec )
+//	{
+//		throw gcnew Exception( "Cannot find video codec." );
+//	}
+//
+//	// open the codec 
+//	if ( avcodec_open( codecContext, codec ) < 0 )
+//	{
+//		throw gcnew Exception( "Cannot open video codec." );
+//	}
+//
+//	data->VideoOutputBuffer = NULL;
+//	if ( !( data->FormatContext->oformat->flags & AVFMT_RAWvideo_frame ) )
+//	{
+//         // allocate output buffer 
+//         data->VideoOutputBufferSize = 6 * codecContext->width * codecContext->height; // more than enough even for raw video
+//		 data->VideoOutputBuffer = (uint8_t*) av_malloc( data->VideoOutputBufferSize );
+//	}
+//
+//	// allocate the encoded raw video_frame
+//	data->VideoFrame = alloc_video_frame( codecContext->pix_fmt, codecContext->width, codecContext->height );
+//
+//	if ( !data->VideoFrame )
+//	{
+//		throw gcnew Exception( "Cannot allocate video video_frame." );
+//	}
+//
+//	// prepare scaling context to convert RGB image to video format
+//	data->ConvertContext = sws_getContext( codecContext->width, codecContext->height, PIX_FMT_BGR24,
+//			codecContext->width, codecContext->height, codecContext->pix_fmt,
+//			SWS_BICUBIC, NULL, NULL, NULL );
+//	// prepare scaling context to convert grayscale image to video format
+//	data->ConvertContextGrayscale = sws_getContext( codecContext->width, codecContext->height, PIX_FMT_GRAY8,
+//			codecContext->width, codecContext->height, codecContext->pix_fmt,
+//			SWS_BICUBIC, NULL, NULL, NULL );
+//
+//	if ( ( data->ConvertContext == NULL ) || ( data->ConvertContextGrayscale == NULL ) )
+//	{
+//		throw gcnew Exception( "Cannot initialize frames conversion context." );
+//	}
+//}
+
+
+//void  FFmpegWrapper::FFmpegMedia::AVFormatOpenOutput(){
+//
+//	av_register_all();
+//
+//	cli::pin_ptr<AVFormatContext*> p_out_format_context=&out_format_context;
+//
+//	//int result = avformat_open_input(p_out_format_context, 
+//	//	(char*) ((Marshal::StringToHGlobalAnsi (outMediaSource)).ToPointer ()), 
+//	//	NULL, NULL);
+//
+//	int result=avformat_alloc_output_context2(p_out_format_context, 
+//		NULL, 
+//		NULL,
+//		(char*) ((Marshal::StringToHGlobalAnsi (outMediaSource)).ToPointer ()));
+//	if (result < 0) 
+//		throw gcnew Exception(L"ffmpeg: Unable to open output file");
+//
+//	//if (avio_open(&out_format_context->pb, 
+//	//	(char*) ((Marshal::StringToHGlobalAnsi (outMediaSource)).ToPointer ()), 
+//	//	AVIO_FLAG_WRITE) < 0) {
+//	//		throw gcnew Exception(L"ffmpeg: Unable to open output file");
+// //       }
+//
+//	output_format =out_format_context->oformat;
+//
+//	video_stream = NULL;
+//
+//	cli::pin_ptr<AVCodec*> p_video_codec=&in_video_codec;
+//
+//	if (output_format->in_video_codec != AV_CODEC_ID_NONE) {
+//        video_stream = add_video_stream(out_format_context, p_video_codec, output_format->in_video_codec);
+//    }
+//
+//	if (video_stream)
+//		open_video(out_format_context, in_video_codec, video_stream);
+//
+//
+//
+//}
+//
+//AVStream *  FFmpegWrapper::FFmpegMedia::add_video_stream(AVFormatContext *oc, AVCodec **codec,
+//                                  enum AVCodecID codec_id)
+//{
+//    AVCodecContext *c;
+//    AVStream *st;
+//
+//    /* find the video encoder */
+//    *codec = avcodec_find_encoder(codec_id);
+//    if (!(*codec)) {
+//		throw gcnew Exception(L"ffmpeg: codec not found");
+//        //fprintf(stderr, "codec not found\n");
+//        //exit(1);
+//    }
+//
+//    st = avformat_new_stream(oc, *codec);
+//    if (!st) {
+//		throw gcnew Exception(L"ffmpeg: could not alloc stream");
+//        //fprintf(stderr, "Could not alloc stream\n");
+//        //exit(1);
+//    }
+//
+//    c = st->codec;
+//
+//    avcodec_get_context_defaults3(c, *codec);
+//
+//    c->codec_id = codec_id;
+//
+//    /* Put sample parameters. */
+//    c->bit_rate = 400000;
+//    /* Resolution must be a multiple of two. */
+//    c->width    = 352;
+//    c->height   = 288;
+//    /* timebase: This is the fundamental unit of time (in seconds) in terms
+//     * of which frame timestamps are represented. For fixed-fps content,
+//     * timebase should be 1/framerate and timestamp increments should be
+//     * identical to 1. */
+//    c->time_base.den = 25;
+//    c->time_base.num = 1;
+//    c->gop_size      = 12; /* emit one intra frame every twelve frames at most */
+//    c->pix_fmt       = PIX_FMT_YUV420P;
+//    if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO) {
+//        /* just for testing, we also add B frames */
+//        c->max_b_frames = 2;
+//    }
+//    if (c->codec_id == AV_CODEC_ID_MPEG1VIDEO) {
+//        /* Needed to avoid using macroblocks in which some coeffs overflow.
+//         * This does not happen with normal video, it just happens here as
+//         * the motion of the chroma plane does not match the luma plane. */
+//        c->mb_decision = 2;
+//    }
+//    /* Some formats want stream headers to be separate. */
+//    if (oc->oformat->flags & AVFMT_GLOBALHEADER)
+//        c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+//
+//    return st;
+//}
+//
+//void FFmpegWrapper::FFmpegMedia::open_video(AVFormatContext *oc, AVCodec *codec, AVStream *st)
+//{
+//    int ret;
+//    AVCodecContext *c = st->codec;
+//
+//    /* open the codec */
+//    if (avcodec_open2(c, codec, NULL) < 0) {
+//		throw gcnew Exception(L"ffmpeg: could not open codec");
+//        //fprintf(stderr, "Could not open codec\n");
+//        //exit(1);
+//    }
+//
+//    video_outbuf = NULL;
+//    if (!(oc->oformat->flags & AVFMT_RAWvideo_frame)) {
+//        /* Allocate output buffer. */
+//        /* XXX: API change will be done. */
+//        /* Buffers passed into lav* can be allocated any way you prefer,
+//         * as long as they're aligned enough for the architecture, and
+//         * they're freed appropriately (such as using av_free for buffers
+//         * allocated with av_malloc). */
+//        video_outbuf_size = 200000;
+//        video_outbuf      = (uint8_t*)av_malloc(video_outbuf_size);
+//    }
+//
+//    /* allocate and init a re-usable frame */
+//  //  frame = avcodec_alloc_frame();
+//  //  if (!frame) {
+//		//throw gcnew Exception(L"ffmpeg: could not allocate video frame");
+//  //      //fprintf(stderr, "Could not allocate video frame\n");
+//  //      //exit(1);
+//  //  }
+//
+//    /* Allocate the encoded raw video_frame. */
+//    ret = avvideo_frame_alloc(dst_video_frame, PIX_FMT_YUV420P, c->width, c->height);
+//    if (ret < 0) {
+//		throw gcnew Exception(L"ffmpeg: could not not allocate video_frame");
+//        //fprintf(stderr, "Could not allocate video_frame\n");
+//        //exit(1);
+//    }
+//
+//    /* If the output format is not YUV420P, then a temporary YUV420P
+//     * video_frame is needed too. It is then converted to the required
+//     * output format. */
+//    if (c->pix_fmt != PIX_FMT_YUV420P) {
+//        ret = avvideo_frame_alloc(src_video_frame, PIX_FMT_YUV420P, c->width, c->height);
+//        if (ret < 0) {
+//			throw gcnew Exception(L"ffmpeg: could not allocate temporary video_frame");
+//            //fprintf(stderr, "Could not allocate temporary video_frame\n");
+//            //exit(1);
+//        }
+//    }
+//
+//    /* copy data and linesize video_frame pointers to frame */
+//	//cli::pin_ptr<AVvideo_frame *> p_dst_video_frame=&dst_video_frame;
+// //  *((AVvideo_frame *)frame) = p_dst_video_frame;
+//}
+//
+//
+//
+//void  FFmpegWrapper::FFmpegMedia::AVFormatCloseOutput(){
+//	avio_close( out_format_context->pb );
+//}
+
+
+
+
+
+//void  FFmpegWrapper::FFmpegMedia::GetDecodeVideoFrame(IntPtr data,  int size, int type){
+//
+//	AVPacket packet;
+//
+//	packet.data=reinterpret_cast<uint8_t*>(data.ToPointer());
+//	packet.size=size;
+//
+//	//av_new_packet(&packet, size);
+//	//memcpy(packet.data, reinterpret_cast<uint8_t*>(data.ToPointer()), size);
+//
+//	packet.pts=AV_NOPTS_VALUE;
+//	packet.dts=AV_NOPTS_VALUE;
+//
+//	packet.stream_index=0;
+//	if(type==5)
+//		packet.flags=1;
+//	else
+//		packet.flags=0;
+//
+//	AVFrame *frame = avcodec_alloc_frame();
+//	AVFrame *rgb_frame = avcodec_alloc_frame();
+//
+//	int width=in_video_codec_context->width;
+//	int height=in_video_codec_context->height;
+//
+//	uint8_t *buffer;
+//	int rgb_frame_size = avvideo_frame_get_size(PIX_FMT_RGB24, width, height);
+//	buffer=(uint8_t *)av_malloc(rgb_frame_size*sizeof(uint8_t));
+//	avvideo_frame_fill((AVvideo_frame *)rgb_frame, buffer, PIX_FMT_RGB24, width, height);
+//
+//	//if (packet.stream_index == video_stream) {
+//	while (packet.size > 0) {
+//		int got_video_frame;
+//		int result =avcodec_decode_video2(in_video_codec_context, frame, &got_video_frame, &packet);
+//
+//		if(result<0){
+//			break;
+//			//throw gcnew Exception(L"Error while decoding");			
+//		}
+//
+//		if (got_video_frame>0) 
+//		{
+//			sws_scale(img_convert_context, frame->data, frame->linesize, 0, frame->height, rgb_frame->data, rgb_frame->linesize);
+//
+//			VideoFrameReceived((IntPtr)(rgb_frame->data[0]), rgb_frame->linesize[0], width, height);
+//		}
+//		//}
+//		packet.size-=result;
+//		packet.data+=result;
+//	}
+//	//av_free(buffer);
+//	//av_free_packet(&packet);
+//
+//}
+
+
+//avformat_network_deinit();
+//avformat_close_input(&format_context);
+//SDL_Quit();
+//if(!String::IsNullOrEmpty(mediaSource))
+//	return video_start((char*) ((Marshal::StringToHGlobalAnsi (mediaSource)).ToPointer ()));			
+//else
+//	throw gcnew Exception(L"Unable to Init Media Source");
+
+//struct SwsContext* img_convert_context;
+//int  video_start(char* input_source)
+//{
+//	int err;
+//
+//	err = SDL_Init(SDL_INIT_VIDEO);
+//	if (err < 0) {
+//		fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
+//		return -1;
+//	}
+//
+//	av_register_all();
+//	avformat_network_init();
+//
+//
+//	AVFormatContext* format_context = NULL;
+//
+//	err = avformat_open_input(&format_context, input_source, NULL, NULL);
+//
+//	if (err < 0) {
+//		fprintf(stderr, "ffmpeg: Unable to open input file\n");
+//
+//		return -1;
+//	}
+//
+//
+//	err = avformat_find_stream_info(format_context, NULL);
+//	if (err < 0) {
+//		fprintf(stderr, "ffmpeg: Unable to find stream info\n");
+//		return -1;
+//	}
+//
+//	int video_stream;
+//	for (video_stream = 0; video_stream < format_context->nb_streams; ++video_stream) {
+//		if (format_context->streams[video_stream]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+//			break;
+//		}
+//	}
+//
+//	if (video_stream == format_context->nb_streams) {
+//		fprintf(stderr, "ffmpeg: Unable to find video stream\n");
+//		//return -1;
+//	}
+//
+//	AVCodecContext* codec_context = format_context->streams[video_stream]->codec;
+//	AVCodec* codec = avcodec_find_decoder(codec_context->codec_id);
+//	err = avcodec_open2(codec_context, codec, NULL);
+//
+//	if (err < 0) {
+//		fprintf(stderr, "ffmpeg: Unable to open codec\n");
+//		return -1;
+//	}
+//
+//	SDL_Surface* screen = SDL_SetVideoMode(codec_context->width, codec_context->height, 0, 0);
+//	if (screen == NULL) {
+//		fprintf(stderr, "Couldn't set video mode\n");
+//		return -1;
+//	}
+//
+//	SDL_Overlay* bmp = SDL_CreateYUVOverlay(codec_context->width, codec_context->height,
+//		SDL_YV12_OVERLAY, screen);
+//
+//	struct SwsContext* img_convert_context;
+//	img_convert_context = sws_getCachedContext(NULL,
+//		codec_context->width, codec_context->height,
+//		codec_context->pix_fmt,
+//		codec_context->width, codec_context->height,
+//		PIX_FMT_YUV420P, SWS_BICUBIC,
+//		NULL, NULL, NULL);
+//	if (img_convert_context == NULL) {
+//		fprintf(stderr, "Cannot initialize the conversion context\n");
+//		return -1;
+//	}
+//
+//
+//	AVFrame* frame = avcodec_alloc_frame();
+//	AVPacket packet;
+//
+//
+//	while (av_read_frame(format_context, &packet) >= 0) {
+//		if (packet.stream_index == video_stream) {
+//			// Video stream packet
+//			int frame_finished;
+//			int result =avcodec_decode_video2(codec_context, frame, &frame_finished, &packet);
+//			if(result<0){
+//				fprintf(stderr, "Error while decoding\n");
+//				exit(1);
+//			}
+//			if (frame_finished) {
+//				SDL_LockYUVOverlay(bmp);
+//
+//				AVvideo_frame pict;
+//				pict.data[0] = bmp->pixels[0];
+//				pict.data[1] = bmp->pixels[2];  // it's because YV12
+//				pict.data[2] = bmp->pixels[1];
+//
+//				pict.linesize[0] = bmp->pitches[0];
+//				pict.linesize[1] = bmp->pitches[2];
+//				pict.linesize[2] = bmp->pitches[1];
+//
+//				sws_scale(img_convert_context,frame->data, frame->linesize,0,
+//					codec_context->height,pict.data, pict.linesize);
+//
+//				SDL_UnlockYUVOverlay(bmp);
+//				SDL_Rect rect;
+//				rect.x = 0;
+//				rect.y = 0;
+//				rect.w = codec_context->width;
+//				rect.h = codec_context->height;
+//				SDL_DisplayYUVOverlay(bmp, &rect);
+//			}
+//		}
+//		av_free_packet(&packet);
+//
+//		SDL_Event event;
+//		if (SDL_PollEvent(&event)) {
+//			if (event.type == SDL_QUIT) {
+//				break;
+//			}
+//		}
+//	}
+//
+//	sws_freeContext(img_convert_context);
+//
+//	//av_free(frame);
+//
+//	avcodec_close(codec_context);
+//
+//	avformat_network_deinit();
+//	avformat_close_input(&format_context);
+//	SDL_Quit();
+//
+//	return 0;
+//}
+//int  CLRWrapper::FFmpegVideo::ShowVideo(String^ inputSource){
+//	//String^ inputSource = "rtsp://192.168.10.203/ONVIF/MediaInput?profile=1_def_profile6";	
+//	//Console::ReadKey();
+//	return video_start((char*) ((Marshal::StringToHGlobalAnsi (inputSource)).ToPointer ()));
+//}
+
+
+//out_video_codec_context->codec_id = AV_CODEC_ID_H264;
+//out_video_codec_context->width = outputVideoParams->Width;
+//out_video_codec_context->height = outputVideoParams->Height;
+
+////out_video_codec_context->profile=FF_PROFILE_H264_BASELINE;
+////out_video_codec_context->width = in_video_codec_context->width;
+////out_video_codec_context->height = in_video_codec_context->height;
+
+//out_video_codec_context->time_base.den = 30;
+//out_video_codec_context->time_base.num = 1;
+
+//out_video_codec_context->pix_fmt = PIX_FMT_YUV420P;
+
+////out_video_codec_context->thread_count = 4;
+
+//out_video_codec_context->bit_rate = 10000000;
+////out_video_codec_context->bit_rate_tolerance = 0;
+////out_video_codec_context->rc_max_rate = 0;
+////out_video_codec_context->rc_buffer_size = 0;
+//out_video_codec_context->gop_size = 1;
+////out_video_codec_context->has_b_frames=0;
+//out_video_codec_context->max_b_frames = 0;
+////out_video_codec_context->b_frame_strategy = 1;
+////out_video_codec_context->coder_type = 1;
+////out_video_codec_context->me_cmp = 1;
+////out_video_codec_context->me_range = 16;
+
+//out_video_codec_context->qmin = 10;
+//out_video_codec_context->qmax = 51;
+
+////out_video_codec_context->scenechange_threshold = 40;
+////out_video_codec_context->flags |= CODEC_FLAG_LOOP_FILTER;
+////out_video_codec_context->me_method = ME_HEX;
+////out_video_codec_context->me_subpel_quality = 5;
+////out_video_codec_context->i_quant_factor = 0.71;
+////out_video_codec_context->qcompress = 0.6;
+////out_video_codec_context->max_qdiff = 4;
+////out_video_codec_context->directpred = 1;
+////out_video_codec_context->flags2 |= CODEC_FLAG2_FASTPSKIP;
+
+//out_video_codec_context->thread_count = 4;
+
+
+
+
+
+	//int  FFmpegPlayer::ShowVideo(){
+
+	//	AVFrame* frame = avcodec_alloc_frame();
+	//	AVPacket packet;
+
+	//	while (av_read_frame(format_context, &packet) >= 0) {
+	//		if (packet.stream_index == video_stream) {
+	//			int frame_finished;
+	//			int result =avcodec_decode_video2(video_codec_context, frame, &frame_finished, &packet);
+	//			if(result<0){
+	//				//exit(1);
+	//				throw gcnew Exception(L"Error while decoding");			
+	//			}
+	//			if (frame_finished) {
+	//				SDL_LockYUVOverlay(bmp);
+
+	//				AVPicture pict;
+	//				pict.data[0] = bmp->pixels[0];
+	//				pict.data[1] = bmp->pixels[2]; 
+	//				pict.data[2] = bmp->pixels[1];
+
+	//				pict.linesize[0] = bmp->pitches[0];
+	//				pict.linesize[1] = bmp->pitches[2];
+	//				pict.linesize[2] = bmp->pitches[1];
+
+	//				sws_scale(img_convert_context,frame->data, frame->linesize,0,
+	//					video_codec_context->height,pict.data, pict.linesize);
+
+	//				SDL_UnlockYUVOverlay(bmp);
+	//				SDL_Rect rect;
+	//				rect.x = 0;
+	//				rect.y = 0;
+	//				rect.w = video_codec_context->width;
+	//				rect.h = video_codec_context->height;
+	//				SDL_DisplayYUVOverlay(bmp, &rect);
+	//			}
+	//		}
+	//		av_free_packet(&packet);
+
+	//		SDL_Event event;
+	//		if (SDL_PollEvent(&event)) {
+	//			if (event.type == SDL_QUIT) {
+	//				break;
+	//			}
+	//		}
+	//	}
+	//	av_free(frame);
+	//}
