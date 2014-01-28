@@ -11,14 +11,9 @@ using System.Xml;
 
 namespace TestOnvif
 {
-    public class ONVIFClient
+    public class ONVIFClient : MediaClient
     {
-        public ONVIFClient(MediaDevice device)
-        {
-            owner = device;
-        }
-
-        private MediaDevice owner;
+        public ONVIFClient(MediaDevice device) : base(device) { }
 
         deviceio.DeviceClient deviceioClient;
 
@@ -39,9 +34,9 @@ namespace TestOnvif
 
         public deviceio.Profile CurrentMediaProfile
         {
-            get 
+            get
             {
-                return mediaProfiles[mediaProfileIndex]; ; 
+                return mediaProfiles[mediaProfileIndex]; ;
             }
             //set { currentMediaProfile = value; }
         }
@@ -74,7 +69,7 @@ namespace TestOnvif
 
             //stringUri = System.Configuration.ConfigurationManager.AppSettings["Uri"];
 
-            EndpointAddress endpointAddress = new EndpointAddress(owner.MediaDeviceUri);
+            EndpointAddress endpointAddress = new EndpointAddress(MediaDevice.MediaDeviceUri);
 
             TextMessageEncodingBindingElement messageElement = new TextMessageEncodingBindingElement()
             {
@@ -101,7 +96,7 @@ namespace TestOnvif
 
             mediaProfiles = mediaClient.GetProfiles();
 
-           // currentMediaProfile = mediaProfiles[mediaProfileIndex];
+            // currentMediaProfile = mediaProfiles[mediaProfileIndex];
 
         }
 

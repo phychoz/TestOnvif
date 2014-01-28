@@ -7,14 +7,9 @@ using System.Net.NetworkInformation;
 
 namespace TestOnvif
 {
-    public class RTSPClient
+    public class RTSPClient:MediaClient
     {
-        public RTSPClient(MediaDevice _owner)
-        {
-            owner = _owner;
-        }
-
-        private MediaDevice owner;
+        public RTSPClient(MediaDevice device) : base(device) { }
 
         Uri mediaStreamUri;
 
@@ -123,7 +118,7 @@ namespace TestOnvif
 
         public void RtspStart()
         { 
-            rtsp = RTSPSession.Open(owner.ONVIFClient.GetCurrentMediaProfileRtspStreamUri().AbsoluteUri);
+            rtsp = RTSPSession.Open(this.MediaDevice.ONVIFClient.GetCurrentMediaProfileRtspStreamUri().AbsoluteUri);
             rtsp.RTSPServerResponse += new RTSPSession.RTSPResponseHandler(rtsp_RTSPServerResponse);
 
             int[] ports = GetPortRange(4);

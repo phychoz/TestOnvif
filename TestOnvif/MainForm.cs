@@ -10,6 +10,58 @@ using System.Xml;
 using System.Net;
 namespace TestOnvif
 {
+    class MediaWorker
+    {
+        private static MediaWorker service = null;
+        public static MediaWorker Service
+        {
+            get
+            {
+                if (service == null)
+                {
+                    service = new MediaWorker();
+                }
+                return service;
+            }
+        }
+
+        /// <summary>
+        /// Колекция доступных ONVIF устройств
+        /// </summary>
+        MediaDevice[] mediaDeviceCollection;
+
+        public MediaDevice[] MediaDeviceCollection
+        {
+            get { return mediaDeviceCollection; }
+            set { mediaDeviceCollection = value; }
+        }
+
+        /// <summary>
+        /// камера с которой работаем
+        /// </summary>
+        MediaDevice mediaDevice;
+
+        public MediaDevice MediaDevice
+        {
+            get { return mediaDevice; }
+            set { mediaDevice = value; }
+        }
+
+        VideoForm videoForm;
+
+        MainForm mainForm = new MainForm();
+
+        public MainForm MainForm
+        {
+            get { return mainForm; }
+            set { mainForm = value; }
+        }
+
+
+
+
+    }
+
     public partial class MainForm : Form
     {
         /// <summary>

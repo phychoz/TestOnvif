@@ -20,6 +20,21 @@ using Emgu.CV.VideoSurveillance;
 
 namespace TestOnvif
 {
+    public abstract class MediaClient
+    {
+        private MediaDevice mediaDevice;
+
+        public MediaDevice MediaDevice
+        {
+            get { return mediaDevice; }
+        }
+
+        public MediaClient(MediaDevice device)
+        {
+            this.mediaDevice = device;
+        }
+    }
+
     public class MediaDevice 
     {
         public MediaDevice(Uri uri)
@@ -44,7 +59,7 @@ namespace TestOnvif
             set { avClient = value; }
         }
 
-        public RTSPClient RtspClient
+        public RTSPClient RTSPClient
         {
             get { return rtspClient; }
             set { rtspClient = value; }

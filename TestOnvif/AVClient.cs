@@ -10,14 +10,9 @@ using System.IO;
 
 namespace TestOnvif
 {
-    public class AVClient
+    public class AVClient : MediaClient
     {
-        public AVClient(MediaDevice device)
-        {
-            owner = device;
-        }
-
-        private MediaDevice owner;
+        public AVClient(MediaDevice device) : base(device) { }
 
         CodecParams inVideoParams;
 
@@ -78,7 +73,7 @@ namespace TestOnvif
             //                                currentMediaProfile.VideoEncoderConfiguration.Resolution.Width,
             //                                currentMediaProfile.VideoEncoderConfiguration.Resolution.Height);
 
-            inVideoParams = owner.ONVIFClient.GetInputCodecParams();
+            inVideoParams = MediaDevice.ONVIFClient.GetInputCodecParams();
 
             outVideoParams = new CodecParams(CodecType.MPEG4, inVideoParams.Width, inVideoParams.Height);
 
