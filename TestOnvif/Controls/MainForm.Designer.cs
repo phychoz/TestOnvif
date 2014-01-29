@@ -61,7 +61,7 @@
             this.LoggerTextBox = new System.Windows.Forms.RichTextBox();
             this.WebButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.DeviceComboBox = new System.Windows.Forms.ComboBox();
+            this.MediaDeviceComboBox = new System.Windows.Forms.ComboBox();
             this.FindDeviceButton = new System.Windows.Forms.Button();
             this.ConnectButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -265,16 +265,16 @@
             this.label2.TabIndex = 44;
             this.label2.Text = "Device:";
             // 
-            // DeviceComboBox
+            // MediaDeviceComboBox
             // 
-            this.DeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.DeviceComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.DeviceComboBox.FormattingEnabled = true;
-            this.DeviceComboBox.Location = new System.Drawing.Point(91, 9);
-            this.DeviceComboBox.Name = "DeviceComboBox";
-            this.DeviceComboBox.Size = new System.Drawing.Size(166, 32);
-            this.DeviceComboBox.TabIndex = 43;
-            this.DeviceComboBox.SelectedIndexChanged += new System.EventHandler(this.DeviceComboBox_SelectedIndexChanged);
+            this.MediaDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.MediaDeviceComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.MediaDeviceComboBox.FormattingEnabled = true;
+            this.MediaDeviceComboBox.Location = new System.Drawing.Point(91, 9);
+            this.MediaDeviceComboBox.Name = "MediaDeviceComboBox";
+            this.MediaDeviceComboBox.Size = new System.Drawing.Size(166, 32);
+            this.MediaDeviceComboBox.TabIndex = 43;
+            //this.MediaDeviceComboBox.SelectedIndexChanged += new System.EventHandler(this.DeviceComboBox_SelectedIndexChanged);
             // 
             // FindDeviceButton
             // 
@@ -306,7 +306,7 @@
             this.Controls.Add(this.ConnectButton);
             this.Controls.Add(this.FindDeviceButton);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.DeviceComboBox);
+            this.Controls.Add(this.MediaDeviceComboBox);
             this.Controls.Add(this.WebButton);
             this.Controls.Add(this.LoggerTextBox);
             this.Controls.Add(this.label1);
@@ -327,6 +327,7 @@
             this.DoubleBuffered = true;
             this.Name = "MainForm";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -352,7 +353,7 @@
         private System.Windows.Forms.RichTextBox LoggerTextBox;
         private System.Windows.Forms.Button WebButton;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox DeviceComboBox;
+        private System.Windows.Forms.ComboBox MediaDeviceComboBox;
         private System.Windows.Forms.Button FindDeviceButton;
         private System.Windows.Forms.Button ConnectButton;
 

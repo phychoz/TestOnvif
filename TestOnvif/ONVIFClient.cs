@@ -472,7 +472,11 @@ namespace TestOnvif
 
             for (int index = 0; index < cameras.Length; index++)
             {
-                cameras[index] = new MediaDevice(findResponse.Endpoints[index].ListenUris.First(x => x.HostNameType == UriHostNameType.IPv4));
+                Uri uri = findResponse.Endpoints[index].ListenUris.First(x => x.HostNameType == UriHostNameType.IPv4);
+
+                string name = ONVIFClient.GetDeviceInformation(uri);
+
+                cameras[index] = new MediaDevice(name, uri);
             }
 
             return cameras;

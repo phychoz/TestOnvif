@@ -36,6 +36,11 @@ namespace TestOnvif
 
             graphics = this.CreateGraphics();
 
+
+            this.MouseWheel+=new MouseEventHandler(VideoForm_MouseWheel);
+
+            this.MouseClick +=new MouseEventHandler(VideoForm_MouseClick);
+
          }
 
         public void UpdateCapture(string capture)
@@ -103,91 +108,26 @@ namespace TestOnvif
                 }
             }
         }
+
+        public void VideoForm_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta < 0)
+                ThreadPool.QueueUserWorkItem(new WaitCallback((obj) => { MediaService.Instance.MediaDevice.ONVIFClient.MoveAndZoomCamera20(0F, 0F, -0.7F); }));
+
+            if (e.Delta > 0)
+                ThreadPool.QueueUserWorkItem(new WaitCallback((obj) => { MediaService.Instance.MediaDevice.ONVIFClient.MoveAndZoomCamera20(0F, 0F, 0.7F); }));
+        }
+
+        public void VideoForm_MouseClick(object sender, MouseEventArgs e)
+        {
+            int centerPan = this.Width / 2;
+            int centerTilt = this.Height / 2;
+
+            float pan = 2 * (float)(e.X - centerPan) / (float)this.Width;
+            float tilt = 2 * (float)(centerTilt - e.Y) / (float)this.Height;
+
+            ThreadPool.QueueUserWorkItem(new WaitCallback((obj) => { MediaService.Instance.MediaDevice.ONVIFClient.MoveAndZoomCamera20(pan, tilt, 0); }));
+        }
+
     }
 }
-
-
-//private void ProcessAudio()
-//{
-//    foreach (MediaData item in mediaDevice.AudioBuffer.GetConsumingEnumerable())
-//    {
-//        //mediaDevice.FFmpegProcessor.WriteAudioDataToFile(item.Data, item.Size);
-//        if (mediaDevice.AudioBuffer.IsAddingCompleted == false)
-//        {
-//            audioPlayer.PlayFromMemory(item.Data, item.Size);
-//        }
-//    }
-//}
-
-//private void ProcessVideo()
-//{
-//    foreach (MediaData item in mediaDevice.VideoBuffer.GetConsumingEnumerable())
-//    {
-//        if (mediaDevice.VideoBuffer.IsAddingCompleted == false)
-//        {
-//            mediaDevice.FFmpegProcessor.WriteVideoDataToFile(item.Data, item.Size);
-
-//            using (Bitmap bitmap = new Bitmap(mediaDevice.InVideoParams.Width, mediaDevice.InVideoParams.Height, item.Size, PixelFormat.Format24bppRgb, item.Data))
-//            {
-//                using (Graphics g = this.CreateGraphics())
-//                {
-//                    g.DrawImage(bitmap, new Rectangle(0, 0, this.Width, this.Height));
-//                }
-//            }
-//           //Thread.Sleep(1000);
-//        }
-//    }
-
-//}
-
-//MediaData item;
-//while (mediaDevice.AudioBuffer.IsCompleted == false)
-//{
-//    if (mediaDevice.AudioBuffer.TryTake(out item) == true)
-//    {
-//        audioPlayer.PlayFromMemory(item.Data, item.Size);
-//    }
-//}
-
-//MediaData item;
-//while (mediaDevice.VideoBuffer.IsCompleted == false)
-//{
-//    if (mediaDevice.VideoBuffer.TryTake(out item) == true)
-//    {
-//        using (Bitmap bitmap = new Bitmap(mediaDevice.InVideoParams.Width, mediaDevice.InVideoParams.Height, item.Size, PixelFormat.Format24bppRgb, item.Data))
-//        {
-//            using (Graphics g = this.CreateGraphics())
-//            {
-//                g.DrawImage(bitmap, new Rectangle(0, 0, this.Width, this.Height));
-//            }
-//        }
-//    }
-//}
-
-//private void ShowFrame(IntPtr data, int linesize, int width, int height)
-//{
-//    if (this.InvokeRequired)
-//        this.Invoke((Action)(() =>
-//        {
-//            DrawFrame(data, linesize, width, height);
-
-//        }));
-//    else
-//    {
-//        DrawFrame(data, linesize, width, height);
-//    }
-//}
-
-//private void DrawFrame(IntPtr data, int linesize, int width, int height)
-//{
-//    if (data == IntPtr.Zero || linesize == 0 || width == 0 || height == 0) return;
-
-//    using (Bitmap bitmap = new Bitmap(width, height, linesize, PixelFormat.Format24bppRgb, data))
-//    {
-//        using (Graphics g = this.CreateGraphics())
-//        {
-//            g.DrawImage(bitmap, new Rectangle(0, 0, this.Width, this.Height));
-//        }
-//    }
-//}
-

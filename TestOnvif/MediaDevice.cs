@@ -37,13 +37,22 @@ namespace TestOnvif
 
     public class MediaDevice 
     {
-        public MediaDevice(Uri uri)
+        public MediaDevice(string name, Uri uri)
         {
             MediaDeviceUri = uri;
+            DisplayName = name;
 
             rtspClient = new RTSPClient(this);
             onvifClient = new ONVIFClient(this);
             avClient = new AVClient(this);
+        }
+
+        private string displayName = string.Empty;
+
+        public string DisplayName
+        {
+            get { return displayName; }
+            set { displayName = value; }
         }
 
         private Uri mediaDeviceUri;
@@ -114,6 +123,9 @@ namespace TestOnvif
             try
             {
                 rtspClient.StopRecieving();
+
+                rtspClient.AudioDataRecieved -= avClient.AudioDataRecieved;
+                rtspClient.VideoDataRecieved -= avClient.VideoDataRecieved;
 
                 avClient.FFmpegStop();
 

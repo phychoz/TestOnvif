@@ -29,7 +29,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -75,44 +75,45 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AVClient.cs" />
-    <Compile Include="CameraDateTime.cs" />
-    <Compile Include="CircularBuffer.cs" />
-    <Compile Include="ClockForm.cs">
+    <Compile Include="Tools\CameraDateTime.cs" />
+    <Compile Include="Tools\CircularBuffer.cs" />
+    <Compile Include="Controls\ClockForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ClockForm.Designer.cs">
+    <Compile Include="Controls\ClockForm.Designer.cs">
       <DependentUpon>ClockForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="DiscoverForm.cs">
+    <Compile Include="Controls\DiscoverForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DiscoverForm.Designer.cs">
+    <Compile Include="Controls\DiscoverForm.Designer.cs">
       <DependentUpon>DiscoverForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MediaClientProfilesForm.cs">
+    <Compile Include="Controls\MediaClientProfilesForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MediaClientProfilesForm.Designer.cs">
+    <Compile Include="Controls\MediaClientProfilesForm.Designer.cs">
       <DependentUpon>MediaClientProfilesForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MediaService.cs" />
     <Compile Include="ONVIFClient.cs" />
-    <Compile Include="RebootForm.cs">
+    <Compile Include="Controls\RebootForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RebootForm.Designer.cs">
+    <Compile Include="Controls\RebootForm.Designer.cs">
       <DependentUpon>RebootForm.cs</DependentUpon>
     </Compile>
     <Compile Include="RTSPClient.cs" />
     <Compile Include="StreamMedia\Audio\G711Decoder.cs" />
     <Compile Include="StreamMedia\Audio\WaveBuilder.cs" />
     <Compile Include="StreamMedia\BigEndian.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="Controls\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="Controls\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Logger.cs" />
+    <Compile Include="Tools\Logger.cs" />
     <Compile Include="MediaDevice.cs" />
     <Compile Include="Security\PasswordDigestBehavior.cs" />
     <Compile Include="Security\PasswordDigestMessageInspector.cs" />
@@ -160,28 +161,28 @@
     <Compile Include="StreamMedia\UnicastUdpReceiver.cs" />
     <Compile Include="Security\UsernameToken.cs" />
     <Compile Include="StreamMedia\Audio\WinMM.cs" />
-    <Compile Include="VideoForm.cs">
+    <Compile Include="Controls\VideoForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VideoForm.Designer.cs">
+    <Compile Include="Controls\VideoForm.Designer.cs">
       <DependentUpon>VideoForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="WebForm.cs">
+    <Compile Include="Controls\WebForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WebForm.Designer.cs">
+    <Compile Include="Controls\WebForm.Designer.cs">
       <DependentUpon>WebForm.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="ClockForm.resx">
+    <EmbeddedResource Include="Controls\ClockForm.resx">
       <DependentUpon>ClockForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DiscoverForm.resx">
+    <EmbeddedResource Include="Controls\DiscoverForm.resx">
       <DependentUpon>DiscoverForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="Controls\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MediaClientProfilesForm.resx">
+    <EmbeddedResource Include="Controls\MediaClientProfilesForm.resx">
       <DependentUpon>MediaClientProfilesForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -193,18 +194,15 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="RebootForm.resx">
+    <EmbeddedResource Include="Controls\RebootForm.resx">
       <DependentUpon>RebootForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VideoForm.resx">
+    <EmbeddedResource Include="Controls\VideoForm.resx">
       <DependentUpon>VideoForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WebForm.resx">
+    <EmbeddedResource Include="Controls\WebForm.resx">
       <DependentUpon>WebForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Properties\DataSources\System.Xml.XmlElement.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
