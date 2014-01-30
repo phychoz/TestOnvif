@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace TestOnvif
 {
-    public partial class VideoForm : Form
+    public partial class VideoForm : Form,IMediaForm
     {
         PCMUPlayer audioPlayer;
 
@@ -107,6 +107,27 @@ namespace TestOnvif
                     g.DrawImage(bmp, new Rectangle(0, 0, this.Width, this.Height));
                 }
             }
+        }
+
+        public void UpdateControls()
+        {
+            if (MediaService.Instance.IsConnected == true)
+            {
+                if (MediaService.Instance.IsStreaming == true)
+                {
+                    //this.Show();
+                }
+                else
+                {
+                    //this.Close();
+                    
+                }
+            }
+            else
+            {
+
+            }
+
         }
 
         public void VideoForm_MouseWheel(object sender, MouseEventArgs e)

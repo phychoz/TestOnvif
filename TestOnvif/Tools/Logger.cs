@@ -10,8 +10,8 @@ namespace TestOnvif
     public static class Logger
     {
 
-        public delegate void EchoEventHandler(string message);
-        public static event EchoEventHandler EchoEvent;
+        public delegate void VerboseEventHandler(string message);
+        public static event VerboseEventHandler Verbose;
 
         private static EnumLoggerType loggerType = EnumLoggerType.LogFile;
         private static string strLogFilePath = string.Empty;
@@ -39,6 +39,13 @@ namespace TestOnvif
             get { return bLoggingEnabled; }
         }
 
+        private static void OnVerbose(string message)
+        {
+            if (Verbose != null)
+            {
+                Verbose(message);
+            }
+        }
         // Write exception log entry
         public static bool Write(Exception objException, EnumLoggerType type = EnumLoggerType.Config)
         {
@@ -79,7 +86,7 @@ namespace TestOnvif
                         sb.AppendLine(String.Format("DateTime: {0} {1}", DateTime.Now.ToShortDateString(), DateTime.Now.ToLongTimeString()));
                         sb.AppendLine("Error: " + objException.Message.Trim());
                         sb.AppendLine("Stack Trace: " + objException.StackTrace.Trim());
-                        sb.AppendLine(new string('-', 100));
+                        //sb.AppendLine(new string('-', 50));
 
                         sw.WriteLine(sb);
 
@@ -93,12 +100,10 @@ namespace TestOnvif
                         sw.Flush();
                         sw.Close();
 
-                        if (EchoEvent != null)
-                            EchoEvent(sb.ToString());
+                        OnVerbose(sb.ToString());
                     }
                 }
 
-                // Use output window event log
                 if (type == EnumLoggerType.Output)
                 {
 
@@ -120,6 +125,7 @@ namespace TestOnvif
                 return false;
             }
         }
+
 
         // Write string
         public static bool Write(string text, EnumLoggerType type = EnumLoggerType.Config)
@@ -155,22 +161,22 @@ namespace TestOnvif
 
                         sb.AppendLine(String.Format("DateTime: {0} {1}", DateTime.Now.ToShortDateString(), DateTime.Now.ToLongTimeString()));
                         sb.AppendLine(String.Format("Text: {0}", text.Trim()));
-                        sb.AppendLine(new string('-', 100));
+                        //sb.AppendLine(new string('-', 100));
 
                         sw.WriteLine(sb);
 
                         sw.Flush();
                         sw.Close();
 
-                        if (EchoEvent != null)
-                            EchoEvent(sb.ToString());
+                        OnVerbose(sb.ToString());
+
                     }
                 }
 
                 if (type == EnumLoggerType.Output)
                 {
-                    if (EchoEvent != null)
-                        EchoEvent(text + Environment.NewLine);
+                    if (Verbose != null)
+                        Verbose(text + Environment.NewLine);
 
                     //Console.WriteLine(String.Format("{0} - {1}", DateTime.Now.ToLongTimeString(), text.Trim()));
                 }
@@ -186,7 +192,7 @@ namespace TestOnvif
                         StringBuilder sb = new StringBuilder();
 
                         sb.AppendLine(String.Format("{0}; {1}; ", DateTime.Now.ToString("HH:mm:ss.ffff"), text.Trim()));
-                        sb.AppendLine(new string('-', 100));
+                        //sb.AppendLine(new string('-', 100));
 
                         //sw.WriteLine(String.Format("Text: {0}", text.Trim()));
                         //sw.WriteLine("-------------------------------------------------------------------");
@@ -196,9 +202,8 @@ namespace TestOnvif
                         sw.Flush();
                         sw.Close();
 
-                        if (EchoEvent != null)
-                            EchoEvent(sb.ToString());
-                    }
+                        OnVerbose(sb.ToString());
+                      }
                 }
 
                 return true;

@@ -10,9 +10,9 @@ using System.IO;
 
 namespace TestOnvif
 {
-    public class AVClient : MediaClient
+    public class AVDeviceClient : MediaDeviceClient
     {
-        public AVClient(MediaDevice device) : base(device) { }
+        public AVDeviceClient(MediaDevice device) : base(device) { }
 
         CodecParams inVideoParams;
 
@@ -67,11 +67,6 @@ namespace TestOnvif
             ffmpegMedia = new FFmpegMedia();
 
             FFmpegMedia.LogDataReceived += (log) => { Logger.Write(log, EnumLoggerType.LogFile); };
-
-
-            //inVideoParams = new CodecParams(onvifClient.GetVideoCodecType(currentMediaProfile.VideoEncoderConfiguration.Encoding),
-            //                                currentMediaProfile.VideoEncoderConfiguration.Resolution.Width,
-            //                                currentMediaProfile.VideoEncoderConfiguration.Resolution.Height);
 
             inVideoParams = MediaDevice.ONVIFClient.GetInputCodecParams();
 
@@ -168,10 +163,10 @@ namespace TestOnvif
                 curAudioItem = audioBuffer.Get();
                 if (curAudioItem != null)//audioBuffer.TryGet(out curAudioItem) == true)
                 {
-                    lock (ffmpegMedia)
-                    {
-                        ffmpegMedia.WriteAudioDataToFile(curAudioItem.Data, curAudioItem.Size, curAudioItem.Time, 0);
-                    }
+                    //lock (ffmpegMedia)
+                    //{
+                    //    ffmpegMedia.WriteAudioDataToFile(curAudioItem.Data, curAudioItem.Size, curAudioItem.Time, 0);
+                    //}
 
                     OnPlayAudio(curAudioItem.Data, curAudioItem.Size);
                     //videoForm.PlayAudio(curAudioItem.Data, curAudioItem.Size);
@@ -192,10 +187,10 @@ namespace TestOnvif
                 curVideoItem = videoBuffer.Get();
                 if (curVideoItem != null) //videoBuffer.TryGet(out curVideoItem) == true)
                 {
-                    lock (ffmpegMedia)
-                    {
-                        ffmpegMedia.WriteVideoDataToFile(curVideoItem.Data, curVideoItem.Size, curVideoItem.Time, 0);
-                    }
+                    //lock (ffmpegMedia)
+                    //{
+                    //    ffmpegMedia.WriteVideoDataToFile(curVideoItem.Data, curVideoItem.Size, curVideoItem.Time, 0);
+                    //}
 
                     using (Bitmap bitmap = new Bitmap(inVideoParams.Width, inVideoParams.Height, curVideoItem.Size, PixelFormat.Format24bppRgb, curVideoItem.Data))
                     {

@@ -64,13 +64,14 @@
             this.MediaDeviceComboBox = new System.Windows.Forms.ComboBox();
             this.FindDeviceButton = new System.Windows.Forms.Button();
             this.ConnectButton = new System.Windows.Forms.Button();
+            this.DisconnectButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // VideoStopButton
             // 
             this.VideoStopButton.Enabled = false;
             this.VideoStopButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.VideoStopButton.Location = new System.Drawing.Point(444, 154);
+            this.VideoStopButton.Location = new System.Drawing.Point(451, 193);
             this.VideoStopButton.Name = "VideoStopButton";
             this.VideoStopButton.Size = new System.Drawing.Size(108, 50);
             this.VideoStopButton.TabIndex = 33;
@@ -81,7 +82,7 @@
             // VideoStartButton
             // 
             this.VideoStartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.VideoStartButton.Location = new System.Drawing.Point(302, 154);
+            this.VideoStartButton.Location = new System.Drawing.Point(309, 193);
             this.VideoStartButton.Name = "VideoStartButton";
             this.VideoStartButton.Size = new System.Drawing.Size(136, 50);
             this.VideoStartButton.TabIndex = 32;
@@ -91,8 +92,9 @@
             // 
             // WsDicoveryButton
             // 
+            this.WsDicoveryButton.Enabled = false;
             this.WsDicoveryButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.WsDicoveryButton.Location = new System.Drawing.Point(12, 108);
+            this.WsDicoveryButton.Location = new System.Drawing.Point(16, 165);
             this.WsDicoveryButton.Name = "WsDicoveryButton";
             this.WsDicoveryButton.Size = new System.Drawing.Size(170, 45);
             this.WsDicoveryButton.TabIndex = 30;
@@ -103,7 +105,7 @@
             // RebootButton
             // 
             this.RebootButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.RebootButton.Location = new System.Drawing.Point(12, 474);
+            this.RebootButton.Location = new System.Drawing.Point(12, 506);
             this.RebootButton.Name = "RebootButton";
             this.RebootButton.Size = new System.Drawing.Size(170, 45);
             this.RebootButton.TabIndex = 29;
@@ -114,7 +116,7 @@
             // SetDateTimefromNtpButton
             // 
             this.SetDateTimefromNtpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.SetDateTimefromNtpButton.Location = new System.Drawing.Point(284, 312);
+            this.SetDateTimefromNtpButton.Location = new System.Drawing.Point(288, 297);
             this.SetDateTimefromNtpButton.Name = "SetDateTimefromNtpButton";
             this.SetDateTimefromNtpButton.Size = new System.Drawing.Size(275, 45);
             this.SetDateTimefromNtpButton.TabIndex = 27;
@@ -125,7 +127,7 @@
             // setDateTimeButton
             // 
             this.setDateTimeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.setDateTimeButton.Location = new System.Drawing.Point(284, 363);
+            this.setDateTimeButton.Location = new System.Drawing.Point(288, 348);
             this.setDateTimeButton.Name = "setDateTimeButton";
             this.setDateTimeButton.Size = new System.Drawing.Size(275, 45);
             this.setDateTimeButton.TabIndex = 26;
@@ -137,7 +139,7 @@
             // 
             this.GetConfigurationButton.Enabled = false;
             this.GetConfigurationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.GetConfigurationButton.Location = new System.Drawing.Point(12, 159);
+            this.GetConfigurationButton.Location = new System.Drawing.Point(16, 216);
             this.GetConfigurationButton.Name = "GetConfigurationButton";
             this.GetConfigurationButton.Size = new System.Drawing.Size(170, 45);
             this.GetConfigurationButton.TabIndex = 24;
@@ -148,7 +150,7 @@
             // getDeviceInformationButton
             // 
             this.getDeviceInformationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.getDeviceInformationButton.Location = new System.Drawing.Point(12, 261);
+            this.getDeviceInformationButton.Location = new System.Drawing.Point(16, 318);
             this.getDeviceInformationButton.Name = "getDeviceInformationButton";
             this.getDeviceInformationButton.Size = new System.Drawing.Size(226, 45);
             this.getDeviceInformationButton.TabIndex = 21;
@@ -159,7 +161,7 @@
             // getHostnameButton
             // 
             this.getHostnameButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.getHostnameButton.Location = new System.Drawing.Point(12, 210);
+            this.getHostnameButton.Location = new System.Drawing.Point(16, 267);
             this.getHostnameButton.Name = "getHostnameButton";
             this.getHostnameButton.Size = new System.Drawing.Size(170, 45);
             this.getHostnameButton.TabIndex = 23;
@@ -170,7 +172,7 @@
             // GetSystemDateAndTimeButton
             // 
             this.GetSystemDateAndTimeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.GetSystemDateAndTimeButton.Location = new System.Drawing.Point(12, 312);
+            this.GetSystemDateAndTimeButton.Location = new System.Drawing.Point(16, 369);
             this.GetSystemDateAndTimeButton.Name = "GetSystemDateAndTimeButton";
             this.GetSystemDateAndTimeButton.Size = new System.Drawing.Size(226, 45);
             this.GetSystemDateAndTimeButton.TabIndex = 22;
@@ -182,7 +184,7 @@
             // 
             this.TimerLabel.AutoSize = true;
             this.TimerLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TimerLabel.Location = new System.Drawing.Point(8, 64);
+            this.TimerLabel.Location = new System.Drawing.Point(12, 126);
             this.TimerLabel.Name = "TimerLabel";
             this.TimerLabel.Size = new System.Drawing.Size(58, 24);
             this.TimerLabel.TabIndex = 35;
@@ -191,7 +193,7 @@
             // MediaClientGetProfilesButton
             // 
             this.MediaClientGetProfilesButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.MediaClientGetProfilesButton.Location = new System.Drawing.Point(12, 363);
+            this.MediaClientGetProfilesButton.Location = new System.Drawing.Point(16, 420);
             this.MediaClientGetProfilesButton.Name = "MediaClientGetProfilesButton";
             this.MediaClientGetProfilesButton.Size = new System.Drawing.Size(226, 45);
             this.MediaClientGetProfilesButton.TabIndex = 36;
@@ -203,7 +205,7 @@
             // 
             this.OpenVideoButton.Enabled = false;
             this.OpenVideoButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.OpenVideoButton.Location = new System.Drawing.Point(414, 474);
+            this.OpenVideoButton.Location = new System.Drawing.Point(418, 454);
             this.OpenVideoButton.Name = "OpenVideoButton";
             this.OpenVideoButton.Size = new System.Drawing.Size(145, 50);
             this.OpenVideoButton.TabIndex = 38;
@@ -216,7 +218,7 @@
             this.MediaProfileComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.MediaProfileComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.MediaProfileComboBox.FormattingEnabled = true;
-            this.MediaProfileComboBox.Location = new System.Drawing.Point(389, 105);
+            this.MediaProfileComboBox.Location = new System.Drawing.Point(396, 144);
             this.MediaProfileComboBox.Name = "MediaProfileComboBox";
             this.MediaProfileComboBox.Size = new System.Drawing.Size(166, 32);
             this.MediaProfileComboBox.TabIndex = 39;
@@ -226,7 +228,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(264, 108);
+            this.label1.Location = new System.Drawing.Point(271, 147);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(119, 24);
             this.label1.TabIndex = 40;
@@ -238,16 +240,16 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.LoggerTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.LoggerTextBox.Location = new System.Drawing.Point(12, 535);
+            this.LoggerTextBox.Location = new System.Drawing.Point(12, 575);
             this.LoggerTextBox.Name = "LoggerTextBox";
-            this.LoggerTextBox.Size = new System.Drawing.Size(551, 67);
+            this.LoggerTextBox.Size = new System.Drawing.Size(565, 110);
             this.LoggerTextBox.TabIndex = 41;
             this.LoggerTextBox.Text = "";
             // 
             // WebButton
             // 
             this.WebButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.WebButton.Location = new System.Drawing.Point(407, 239);
+            this.WebButton.Location = new System.Drawing.Point(418, 519);
             this.WebButton.Name = "WebButton";
             this.WebButton.Size = new System.Drawing.Size(145, 50);
             this.WebButton.TabIndex = 42;
@@ -259,7 +261,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(12, 12);
+            this.label2.Location = new System.Drawing.Point(12, 18);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 24);
             this.label2.TabIndex = 44;
@@ -270,16 +272,15 @@
             this.MediaDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.MediaDeviceComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.MediaDeviceComboBox.FormattingEnabled = true;
-            this.MediaDeviceComboBox.Location = new System.Drawing.Point(91, 9);
+            this.MediaDeviceComboBox.Location = new System.Drawing.Point(91, 15);
             this.MediaDeviceComboBox.Name = "MediaDeviceComboBox";
-            this.MediaDeviceComboBox.Size = new System.Drawing.Size(166, 32);
+            this.MediaDeviceComboBox.Size = new System.Drawing.Size(244, 32);
             this.MediaDeviceComboBox.TabIndex = 43;
-            //this.MediaDeviceComboBox.SelectedIndexChanged += new System.EventHandler(this.DeviceComboBox_SelectedIndexChanged);
             // 
             // FindDeviceButton
             // 
             this.FindDeviceButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.FindDeviceButton.Location = new System.Drawing.Point(268, 4);
+            this.FindDeviceButton.Location = new System.Drawing.Point(356, 10);
             this.FindDeviceButton.Name = "FindDeviceButton";
             this.FindDeviceButton.Size = new System.Drawing.Size(145, 41);
             this.FindDeviceButton.TabIndex = 45;
@@ -290,23 +291,35 @@
             // ConnectButton
             // 
             this.ConnectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ConnectButton.Location = new System.Drawing.Point(419, 4);
+            this.ConnectButton.Location = new System.Drawing.Point(45, 66);
             this.ConnectButton.Name = "ConnectButton";
-            this.ConnectButton.Size = new System.Drawing.Size(145, 41);
+            this.ConnectButton.Size = new System.Drawing.Size(137, 45);
             this.ConnectButton.TabIndex = 46;
             this.ConnectButton.Text = "Connect";
             this.ConnectButton.UseVisualStyleBackColor = true;
             this.ConnectButton.Click += new System.EventHandler(this.ConnectButton_Click);
             // 
+            // DisconnectButton
+            // 
+            this.DisconnectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.DisconnectButton.Location = new System.Drawing.Point(198, 66);
+            this.DisconnectButton.Name = "DisconnectButton";
+            this.DisconnectButton.Size = new System.Drawing.Size(137, 45);
+            this.DisconnectButton.TabIndex = 47;
+            this.DisconnectButton.Text = "Disconnect";
+            this.DisconnectButton.UseVisualStyleBackColor = true;
+            this.DisconnectButton.Click += new System.EventHandler(this.DisconnectButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(575, 614);
-            this.Controls.Add(this.ConnectButton);
-            this.Controls.Add(this.FindDeviceButton);
+            this.ClientSize = new System.Drawing.Size(589, 697);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.MediaDeviceComboBox);
+            this.Controls.Add(this.DisconnectButton);
+            this.Controls.Add(this.FindDeviceButton);
+            this.Controls.Add(this.ConnectButton);
             this.Controls.Add(this.WebButton);
             this.Controls.Add(this.LoggerTextBox);
             this.Controls.Add(this.label1);
@@ -326,7 +339,6 @@
             this.Controls.Add(this.GetSystemDateAndTimeButton);
             this.DoubleBuffered = true;
             this.Name = "MainForm";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -356,6 +368,7 @@
         private System.Windows.Forms.ComboBox MediaDeviceComboBox;
         private System.Windows.Forms.Button FindDeviceButton;
         private System.Windows.Forms.Button ConnectButton;
+        private System.Windows.Forms.Button DisconnectButton;
 
 
     }

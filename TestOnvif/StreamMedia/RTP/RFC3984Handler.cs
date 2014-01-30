@@ -11,7 +11,7 @@ namespace TestOnvif
     /// RTP Payload Format for H.264 Video
     /// http://www.ietf.org/rfc/rfc3984.txt
     /// </summary>
-    class RFC3984Handler
+    class RFC3984Handler : RFCHandler
     {
         /// <summary>
         /// Буффер, подбирается под размет принимаемого фрейма
@@ -25,10 +25,7 @@ namespace TestOnvif
 
         private int bufferOffset = 0;
 
-        public event H264FrameReceivedHandler H264FrameReceived;
-        public delegate void H264FrameReceivedHandler(IntPtr data, int size, bool flag, uint pts);
-
-        unsafe public void HandleRtpPacket(RtpPacket packet)
+        unsafe public override void HandleRtpPacket(RtpPacket packet)
         {
             int payloadLength = packet.PayloadLength;
 
@@ -97,7 +94,7 @@ namespace TestOnvif
 
                         bool flag = (nalUnitType == 5) ? true : false;// ключевой кадр
 
-                        H264FrameReceived(ptr, bufferOffset, flag, packet.Timestamp);
+                        OnFrameReceived(ptr, bufferOffset, flag, packet.Timestamp);
 
                         Marshal.FreeHGlobal(ptr);
 

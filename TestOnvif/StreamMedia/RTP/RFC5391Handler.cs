@@ -10,23 +10,25 @@ namespace TestOnvif
     /// RTP Payload Format for ITU-T Recommendation G.711.1
     /// http://tools.ietf.org/rfc/rfc5391.txt
     /// </summary>
-    class RFC5391Handler
+    class RFC5391Handler : RFCHandler
     {
-        public event AudioDataReceivedHandler AudioDataReceived;
-        public delegate void AudioDataReceivedHandler(byte [] data);
+        //public event AudioDataReceivedHandler AudioDataReceived;
+        //public delegate void AudioDataReceivedHandler(byte [] data);
 
-        G711Decoder g711Decoder = new G711Decoder();
+        //G711Decoder g711Decoder = new G711Decoder();
 
-        public void HandleRtpPacket(RtpPacket packet)
+        public override void HandleRtpPacket(RtpPacket packet)
         {
-            int length = packet.PayloadLength;
-            byte[] payload = new byte[length];
+            //int length = packet.PayloadLength;
+            //byte[] payload = new byte[length];
 
-            Marshal.Copy(packet.Payload, payload, 0, length);
+            //Marshal.Copy(packet.Payload, payload, 0, length);
 
-            byte[] outWav = g711Decoder.Decode(payload);
+            //byte[] outWav = g711Decoder.Decode(payload);
+            //AudioDataReceived(outWav);
 
-            AudioDataReceived(outWav);
+            OnFrameReceived(packet.Payload, packet.PayloadLength, false, packet.Timestamp);
+            
         }
     }
 }

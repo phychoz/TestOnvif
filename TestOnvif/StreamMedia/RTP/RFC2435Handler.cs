@@ -10,7 +10,7 @@ namespace TestOnvif
     /// <summary>
     /// Класс для обработки потока RTP пакетов, в которых содержатся изображения JPEG
     /// </summary>
-    public class RFC2435Handler
+    class RFC2435Handler:RFCHandler
     {
         const int BUFFER_SIZE = 1000000;
         /// <summary>
@@ -194,7 +194,7 @@ namespace TestOnvif
         /// http://tools.ietf.org/html/rfc2435
         /// </summary>
         /// <param name="packet">RTP пакет для обработки</param>
-        unsafe public void HandleRtpPacket(RtpPacket packet)
+        unsafe override public void HandleRtpPacket(RtpPacket packet)
         {
             int payloadLength = packet.PayloadLength;
 
@@ -270,7 +270,7 @@ namespace TestOnvif
                     if (currentPacketTimeStamp <= lastPacketTimeStamp)
                         Logger.Write(String.Format("{0}<={1}", currentPacketTimeStamp, lastPacketTimeStamp), EnumLoggerType.DebugLog);
 
-                    JpegFrameReceived(jpg, bufferOffset, true, packet.Timestamp);
+                    OnFrameReceived(jpg, bufferOffset, true, packet.Timestamp);
 
                     lastPacketTimeStamp = currentPacketTimeStamp;
 
@@ -292,17 +292,5 @@ namespace TestOnvif
         /// Флаг, сигнализирующий о том, что произошел сбой при склеивании JPEGа
         /// </summary>
         private bool corrupted = false;
-
-        /// <summary>
-        /// Событие вызывается при формировании не поврежденного JPEG-изображения
-        /// </summary>
-        public event JpegFrameReceivedHandler JpegFrameReceived;
-
-        /// <summary>
-        /// Тип обработчика для события формирования пакета
-        /// </summary>
-        /// <param name="ptr">Указатель на данные</param>
-        /// <param name="count">Количество данных в байтах</param>
-        public delegate void JpegFrameReceivedHandler(IntPtr data, int count, bool key, uint pts);
     }
 }

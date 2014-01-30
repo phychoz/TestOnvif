@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Net;
 
 namespace TestOnvif
 {
@@ -52,7 +53,7 @@ namespace TestOnvif
         /// <param name="data">Указатель на область памяти 
         /// в неуправляемой куче, где содержится RTP пакет</param>
         /// <param name="count">Размер области памяти в байтах</param>
-        unsafe public void HandleRtpPacket(IntPtr data, int count)
+        unsafe public void HandleRtpPacket(IPEndPoint remoteEndPoint, IntPtr data, int count) //IntPtr data, int count)//
         {
             RtpPacket packet = new RtpPacket();
 

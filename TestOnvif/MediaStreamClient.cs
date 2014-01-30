@@ -7,11 +7,11 @@ using System.Net.NetworkInformation;
 
 namespace TestOnvif
 {
-    public class RTSPClient:MediaClient
+    public class MediaStreamClient : MediaDeviceClient, IDisposable
     {
-        public RTSPClient(MediaDevice device) : base(device) { }
+        public MediaStreamClient(MediaDevice device) : base(device) { }
 
-        Uri mediaStreamUri;
+        private Uri mediaStreamUri;
 
         public Uri MediaStreamUri
         {
@@ -19,76 +19,61 @@ namespace TestOnvif
             set { mediaStreamUri = value; }
         }
 
-        RTSPSession rtsp;
+        private RTSPSession rtspSession;
 
-        UnicastUdpClient videoUdpClient;
-        UnicastUdpClient audioUdpClient;
+        private UnicastUdpClient videoUdpClient;
+        private UnicastUdpClient audioUdpClient;
 
-        RtpPacketHandler audioRtpHandler;
-        RtpPacketHandler videoRtpHandler;
+        private RtpPacketHandler audioRtpHandler;
+        private RtpPacketHandler videoRtpHandler;
 
-        RtcpReporter videoRtcpReporter;
-        RtcpReporter audioRtcpReporter;
+        private RtcpReporter videoRtcpReporter;
+        private RtcpReporter audioRtcpReporter;
 
-        RFC2435Handler jpegHandler;
-        RFC3984Handler h264Handler;
-        RFC3016Handler mpeg4Handler;
+        private RFCHandler videoRfcHandler;
+        private RFCHandler audioRfcHandler;
 
-        public void MediaInit(string VideoEncoding)
+        public void InitMedia(string VideoEncoding, string AudioEncoding)
         {
+            InitVideo(VideoEncoding);
 
-            //int[] ports = GetPortRange(4);
+            InitAudio(AudioEncoding);
+        }
 
-            //videoRtpPort = ports[0];
+        private void InitVideo(string VideoEncoding)
+        {
             videoUdpClient = new UnicastUdpClient(videoRtpPort);
-            videoUdpClient.UdpPacketRecived += videoClient_UdpPacketRecieved;
             videoRtpHandler = new RtpPacketHandler();
 
-            switch (VideoEncoding)
-            {
-                case "JPEG":
-                    jpegHandler = new RFC2435Handler();
-                    videoRtpHandler.RtpPacketRecieved += jpegHandler.HandleRtpPacket; //rtpVideoHandler_RtpPacketRecieved;
-                    jpegHandler.JpegFrameReceived += videoHandler_FrameRecived;
+            videoUdpClient.UdpPacketRecived += videoRtpHandler.HandleRtpPacket;
+            videoRfcHandler = RFCHandlerFactory.Create(VideoEncoding);
 
-                    break;
+            videoRtpHandler.RtpPacketRecieved += videoRfcHandler.HandleRtpPacket;
+            videoRfcHandler.FrameReceived += videoHandler_FrameRecived;
 
-                case "MP4V-ES":
-                    mpeg4Handler = new RFC3016Handler();
-                    videoRtpHandler.RtpPacketRecieved += mpeg4Handler.HandleRtpPacket;
-                    mpeg4Handler.Mpeg4FrameReceived += videoHandler_FrameRecived;
-
-                    break;
-
-                case "H264":
-                    h264Handler = new RFC3984Handler();
-                    videoRtpHandler.RtpPacketRecieved += h264Handler.HandleRtpPacket;
-                    h264Handler.H264FrameReceived += videoHandler_FrameRecived;
-
-                    break;
-            }
-
-            //videoRtcpPort = ports[1];
             videoRtcpReporter = new RtcpReporter(videoRtcpPort, MediaType.Video);
             videoRtpHandler.RtpPacketRecieved += videoRtcpReporter.HandleRtpPacket;
             videoRtcpReporter.RtpTimeReporting += videoRtcpClient_OnRtpTimeReporting;
 
             videoRtcpReporter.SessionTimeCorrecting += videoRtcpClient_OnRtpTimeCorrecting;
+        }
 
-            //audioRtpPort = ports[2];
+        private void InitAudio(string AudioEncoding)
+        {
             audioUdpClient = new UnicastUdpClient(audioRtpPort);
-            audioUdpClient.UdpPacketRecived += audioClient_UdpPacketReceived;
             audioRtpHandler = new RtpPacketHandler();
-            audioRtpHandler.RtpPacketRecieved += rtpAudioHandler_RtpPacketRecieved;
 
-            //audioRtcpPort = ports[3];
+            audioUdpClient.UdpPacketRecived += audioRtpHandler.HandleRtpPacket;
+
+            audioRfcHandler = RFCHandlerFactory.Create(AudioEncoding);
+
+            audioRtpHandler.RtpPacketRecieved += audioRfcHandler.HandleRtpPacket;
+            audioRfcHandler.FrameReceived += audioHandler_FrameRecived;
+
             audioRtcpReporter = new RtcpReporter(audioRtcpPort, MediaType.Audio);
 
             // audioRtcpReporter.RtpTimeReporting += audioRtcpClient_OnRtpTimeReporting;
             audioRtpHandler.RtpPacketRecieved += audioRtcpReporter.HandleRtpPacket;
-
-            //mediaStreamUri = GetStreamUri();
-
         }
 
         public void StartRecieving()
@@ -118,8 +103,8 @@ namespace TestOnvif
 
         public void RtspStart()
         { 
-            rtsp = RTSPSession.Open(this.MediaDevice.ONVIFClient.GetCurrentMediaProfileRtspStreamUri().AbsoluteUri);
-            rtsp.RTSPServerResponse += new RTSPSession.RTSPResponseHandler(rtsp_RTSPServerResponse);
+            rtspSession = RTSPSession.Open(this.MediaDevice.ONVIFClient.GetCurrentMediaProfileRtspStreamUri().AbsoluteUri);
+            rtspSession.RTSPServerResponse += new RTSPSession.RTSPResponseHandler(rtsp_RTSPServerResponse);
 
             int[] ports = GetPortRange(4);
 
@@ -128,22 +113,22 @@ namespace TestOnvif
             audioRtpPort = ports[2];
             audioRtcpPort = ports[3];
 
-            rtsp.StartTranslation(videoRtpPort, videoRtcpPort, audioRtpPort, audioRtcpPort);
+            rtspSession.StartTranslation(videoRtpPort, videoRtcpPort, audioRtpPort, audioRtcpPort);
         }
 
         private void RtspStop()
         {
-            if (rtsp != null)
+            if (rtspSession != null)
             {
-                rtsp.Teardown();
-                rtsp.Close();
+                rtspSession.Teardown();
+                rtspSession.Close();
             }
         }
         void rtsp_RTSPServerResponse(string command)
         {
             if (command == "play")
             {
-                MediaInit(RTSPSession.Codec);
+                InitMedia(RTSPSession.Codec, "G711");
             }
         }
 
@@ -181,22 +166,6 @@ namespace TestOnvif
             return ports;
         }
 
-
-        void audioClient_UdpPacketReceived(IPEndPoint remoteEndPoint, IntPtr data, int count)
-        {
-
-            audioRtpHandler.HandleRtpPacket(data, count);
-        }
-
-
-
-        void videoClient_UdpPacketRecieved(IPEndPoint remoteEndPoint, IntPtr data, int count)
-        {
-
-            videoRtpHandler.HandleRtpPacket(data, count);
-        }
-
-
         void videoHandler_FrameRecived(IntPtr ptr, int size, bool key, uint pts)
         {
             if (VideoDataRecieved != null)
@@ -205,11 +174,11 @@ namespace TestOnvif
             }
         }
 
-        void rtpAudioHandler_RtpPacketRecieved(RtpPacket packet)
+        void audioHandler_FrameRecived(IntPtr ptr, int size, bool key, uint pts)
         {
             if (AudioDataRecieved != null)
             {
-                AudioDataRecieved(packet.Payload, packet.PayloadLength, false, packet.Timestamp);
+                AudioDataRecieved(ptr, size, false, pts);
             }
         }
 
@@ -243,6 +212,15 @@ namespace TestOnvif
             //    audioClockForm.UpdateLabel(time.ToString("HH:mm:ss.fff"));
             //}
 
+        }
+
+        public void Dispose()
+        {
+            if (rtspSession != null)
+            {
+                rtspSession.Dispose();
+                rtspSession = null;
+            }
         }
 
     }

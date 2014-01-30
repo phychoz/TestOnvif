@@ -23,7 +23,7 @@ namespace TestOnvif
             try
             {
                 MainForm form = MediaService.Instance.CreateMainForm();
-                Logger.EchoEvent += form.Echo;
+                Logger.Verbose += form.Verbose;
 
                 Application.Run(form);
             }

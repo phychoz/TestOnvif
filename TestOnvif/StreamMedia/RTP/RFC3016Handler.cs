@@ -10,7 +10,7 @@ namespace TestOnvif
     /// RTP Payload Format for MPEG-4 Audio/Visual Streams
     /// http://tools.ietf.org/rfc/rfc3016.txt
     /// </summary>
-    class RFC3016Handler
+    class RFC3016Handler:RFCHandler
     {
         /// <summary>
         /// Приемный буффер, подбирается под размет принимаемого фрейма
@@ -22,8 +22,8 @@ namespace TestOnvif
         int bufferOffset;
 
         bool isKeyFrame = false;
-        
-        public void HandleRtpPacket(RtpPacket packet)
+
+        public override void HandleRtpPacket(RtpPacket packet)
         {
             if (packet.IsMarker==false)
             {
@@ -51,16 +51,12 @@ namespace TestOnvif
                 IntPtr ptr = Marshal.AllocHGlobal(bufferOffset);
                 Marshal.Copy(buffer, 0, ptr, bufferOffset);
 
-                Mpeg4FrameReceived(ptr, bufferOffset, isKeyFrame, packet.Timestamp);
-
+                OnFrameReceived(ptr, bufferOffset, isKeyFrame, packet.Timestamp);
                 Marshal.FreeHGlobal(ptr);
 
                 return;
             }
         }
 
-        public event Mpeg4FrameReceivedHandler Mpeg4FrameReceived;
-
-        public delegate void Mpeg4FrameReceivedHandler(IntPtr data, int count, bool key, uint pts);
     }
 }

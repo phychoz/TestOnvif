@@ -10,7 +10,7 @@ using System.Xml;
 using System.Net;
 namespace TestOnvif
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, IMediaForm
     {
         System.Windows.Forms.Timer timer;
         
@@ -28,7 +28,7 @@ namespace TestOnvif
 
         }
 
-        public void Echo(string message)
+        public void Verbose(string message)
         {
             if (this.InvokeRequired == true)
             {
@@ -50,11 +50,11 @@ namespace TestOnvif
 
         }
 
-        public void BindMediaProfileCollection(MediaDevice device)
+        public void BindMediaProfileCollection(deviceio.Profile [] profiles) 
         {
             BindingSource binding = new BindingSource()
             {
-                DataSource = device.ONVIFClient.MediaProfiles
+                DataSource = profiles,
             };
 
             this.MediaProfileComboBox.DataSource = binding.DataSource;
@@ -75,15 +75,57 @@ namespace TestOnvif
 
         private void VideoStartButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.Start();
+            deviceio.Profile profile = this.MediaProfileComboBox.SelectedValue as deviceio.Profile;
+
+            if (profile != null)
+            {
+                MediaService.Instance.Start(profile);
+            }
         }
 
-        public void UIStartMode()
+        public void UpdateControls()
         {
-            VideoStartButton.Enabled = false;
-            MediaProfileComboBox.Enabled = false;
+            if (MediaService.Instance.IsConnected == true)
+            {
+                UpdateControls(true);
 
-            VideoStopButton.Enabled = true;
+                if (MediaService.Instance.IsStreaming == true)
+                {
+                    this.VideoStartButton.Enabled = false;
+                    this.MediaProfileComboBox.Enabled = false;
+
+                    this.VideoStopButton.Enabled = true;
+                }
+                else
+                {
+                    this.VideoStartButton.Enabled = true;
+                    this.VideoStopButton.Enabled = false;
+                    this.MediaProfileComboBox.Enabled = true;
+                }
+            }
+            else
+            {
+                UpdateControls(false);
+
+                this.VideoStartButton.Enabled = false;
+                this.VideoStopButton.Enabled = false;
+                this.MediaProfileComboBox.Enabled = false;
+            }
+
+        }
+
+        private void UpdateControls(bool Enabled)
+        {
+            this.ConnectButton.Enabled = !Enabled;
+            this.DisconnectButton.Enabled = Enabled;
+            this.GetConfigurationButton.Enabled = Enabled;
+            this.getDeviceInformationButton.Enabled = Enabled;
+            this.getHostnameButton.Enabled = Enabled;
+            this.GetSystemDateAndTimeButton.Enabled = Enabled;
+            this.MediaClientGetProfilesButton.Enabled = Enabled;
+            this.RebootButton.Enabled = Enabled;
+            this.SetDateTimefromNtpButton.Enabled = Enabled;
+            this.setDateTimeButton.Enabled = Enabled;
         }
 
         private void VideoStopButton_Click(object sender, EventArgs e)
@@ -91,15 +133,6 @@ namespace TestOnvif
             MediaService.Instance.Stop();
         }
 
-
-
-        public void UIStopMode()
-        {
-
-            VideoStartButton.Enabled = true;
-            VideoStopButton.Enabled = false;
-            MediaProfileComboBox.Enabled = true;
-        }
 
         #region ONVIF
 
@@ -144,25 +177,9 @@ namespace TestOnvif
         }
         #endregion
 
-
-        private void WriteToFileCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            //if(WriteToFileCheckBox.Checked)
-            //    mediaDevice.FFmpegProcessor.WriteVideoFrameToFile = true;
-            //else
-            //    mediaDevice.FFmpegProcessor.WriteVideoFrameToFile = false;
-        }
-
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //if (mediaDevice != null)
-            //    mediaDevice.StopMedia();
-        }
-
         private void MediaClientGetProfilesButton_Click(object sender, EventArgs e)
         {
-            //MediaClientProfilesForm mcpf = new MediaClientProfilesForm(mediaDevice.ONVIFClient.MediaProfiles);
-            //mcpf.ShowDialog();
+            MediaService.Instance.ExecuteCommand("MediaClientGetProfiles");
         }
 
         private void GetConfigurationButton_Click(object sender, EventArgs e)
@@ -197,14 +214,19 @@ namespace TestOnvif
 
         private void MediaProfileComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(MediaService.Instance.MediaDevice!=null)
-                MediaService.Instance.MediaDevice.ONVIFClient.MediaProfileIndex = MediaProfileComboBox.SelectedIndex;
+            //if(MediaService.Instance.MediaDevice!=null)
+            //    MediaService.Instance.MediaDevice.ONVIFClient.MediaProfileIndex = MediaProfileComboBox.SelectedIndex;
 
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             MediaService.Instance.FindDevices();
+        }
+
+        private void DisconnectButton_Click(object sender, EventArgs e)
+        {
+            MediaService.Instance.Disconnect();
         }
     }
 

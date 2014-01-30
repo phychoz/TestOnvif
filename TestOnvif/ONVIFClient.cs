@@ -11,7 +11,7 @@ using System.Xml;
 
 namespace TestOnvif
 {
-    public class ONVIFClient : MediaClient
+    public class ONVIFClient : MediaDeviceClient
     {
         public ONVIFClient(MediaDevice device) : base(device) { }
 
@@ -30,23 +30,12 @@ namespace TestOnvif
             set { mediaProfiles = value; }
         }
 
-        //deviceio.Profile currentMediaProfile;
+        deviceio.Profile MediaProfile;
 
         public deviceio.Profile CurrentMediaProfile
         {
-            get
-            {
-                return mediaProfiles[mediaProfileIndex]; ;
-            }
-            //set { currentMediaProfile = value; }
-        }
-
-        int mediaProfileIndex = 0;
-
-        public int MediaProfileIndex
-        {
-            get { return mediaProfileIndex; }
-            set { mediaProfileIndex = value; }
+            get { return MediaProfile; }
+            set  { MediaProfile = value; }
         }
 
         DeviceInformation deviceInformation;
@@ -460,26 +449,30 @@ namespace TestOnvif
 
         public static MediaDevice[] GetAvailableMediaDevices()
         {
-            UdpDiscoveryEndpoint udpDiscoveryEndpoint = new UdpDiscoveryEndpoint(DiscoveryVersion.WSDiscoveryApril2005);
-            DiscoveryClient discoveryClientc = new DiscoveryClient(udpDiscoveryEndpoint);
-            FindCriteria findCriteria = new FindCriteria();
+            DiscoveryClient discoveryClient = new DiscoveryClient(new UdpDiscoveryEndpoint(DiscoveryVersion.WSDiscoveryApril2005));
+            FindCriteria findCriteria = new FindCriteria
+            { 
+                Duration = TimeSpan.FromSeconds(1), 
+                MaxResults = 15 
+            };
+
             findCriteria.ContractTypeNames.Add(new XmlQualifiedName("NetworkVideoTransmitter", @"http://www.onvif.org/ver10/network/wsdl"));
-            findCriteria.Duration = TimeSpan.FromSeconds(1);
-            findCriteria.MaxResults = 15;
-            FindResponse findResponse = discoveryClientc.Find(findCriteria);
 
-            MediaDevice[] cameras = new MediaDevice[findResponse.Endpoints.Count];
+            FindResponse findResponse = discoveryClient.Find(findCriteria);
 
-            for (int index = 0; index < cameras.Length; index++)
+            List<MediaDevice> cameras = new List<MediaDevice>();
+
+            foreach (var point in findResponse.Endpoints)
             {
-                Uri uri = findResponse.Endpoints[index].ListenUris.First(x => x.HostNameType == UriHostNameType.IPv4);
+                Uri uri = point.ListenUris.FirstOrDefault(u => u.HostNameType == UriHostNameType.IPv4);
+                if (uri != null)
+                {
+                    string name = ONVIFClient.GetDeviceInformation(uri);
 
-                string name = ONVIFClient.GetDeviceInformation(uri);
-
-                cameras[index] = new MediaDevice(name, uri);
+                    cameras.Add(new MediaDevice(name, uri));
+                }
             }
-
-            return cameras;
+            return cameras.ToArray();
         }
 
     }
