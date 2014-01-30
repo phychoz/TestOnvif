@@ -93,8 +93,8 @@ namespace TestOnvif
             {
                 avProcessor.Start();
 
-                StreamClient.AudioDataRecieved += avProcessor.AudioDataRecieved;
-                StreamClient.VideoDataRecieved += avProcessor.VideoDataRecieved;
+                //StreamClient.AudioChannel.DataRecieved+= avProcessor.AudioDataRecieved;
+                //StreamClient.VideoChannel.DataRecieved += avProcessor.VideoDataRecieved;
 
                 StreamClient.StartRecieving();
 
@@ -118,8 +118,8 @@ namespace TestOnvif
             {
                 StreamClient.StopRecieving();
 
-                StreamClient.AudioDataRecieved -= avProcessor.AudioDataRecieved;
-                StreamClient.VideoDataRecieved -= avProcessor.VideoDataRecieved;
+                //StreamClient.AudioChannel.DataRecieved -= avProcessor.AudioDataRecieved;
+                //StreamClient.VideoChannel.DataRecieved -= avProcessor.VideoDataRecieved;
 
                 avProcessor.FFmpegStop();
 
