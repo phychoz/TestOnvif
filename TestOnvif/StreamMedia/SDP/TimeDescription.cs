@@ -9,7 +9,7 @@ namespace TestOnvif
            t=  (time the session is active)     
            r=* (zero or more repeat times)
          */
-    class TimeDescription
+    public class TimeDescription
     {
         public string Time { get; private set; }
         public List<string> Repetitions = null;

@@ -123,7 +123,7 @@ namespace TestOnvif
         /// </summary>
         /// <param name="localRtcpPort">Порт, на который будут приходить RTCP пакеты на локальной машине</param>
         /// <param name="sfreq">Частота дескретизации кодека для видео 90000, для аудио 8000</param>
-        public RtcpReporter(int localRtcpPort, MediaType type)
+        public RtcpReporter(int localRtcpPort, int sampleRate)
         {
             udpClient = new UnicastUdpClient(localRtcpPort);
             remoteEndPoint = new IPEndPoint(IPAddress.Any, Port);
@@ -136,16 +136,7 @@ namespace TestOnvif
             rtcpHandler.CreatedRtcpSourceDescription += rtcpHandler_CreatedRtcpSourceDescription;
 
             Port = localRtcpPort;
-
-            switch (type)
-            {
-                case MediaType.Audio:
-                    sampleFrequency=8000;
-                    break;
-                case MediaType.Video:
-                    sampleFrequency=90000;
-                    break;
-            }
+            sampleFrequency = sampleRate;
 
             //udpSender = new UdpClient();
             //udpSender.Client.Bind(remoteEndPoint);

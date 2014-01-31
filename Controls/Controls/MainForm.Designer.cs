@@ -1,4 +1,4 @@
-﻿namespace TestOnvif
+﻿namespace Onvif.Controls
 {
     partial class MainForm
     {

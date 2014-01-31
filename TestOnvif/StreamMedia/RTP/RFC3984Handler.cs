@@ -11,7 +11,7 @@ namespace TestOnvif
     /// RTP Payload Format for H.264 Video
     /// http://www.ietf.org/rfc/rfc3984.txt
     /// </summary>
-    class RFC3984Handler : RFCHandler
+    class RFC3984PayloadHandler : PayloadHandler
     {
         /// <summary>
         /// Буффер, подбирается под размет принимаемого фрейма

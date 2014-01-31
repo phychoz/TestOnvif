@@ -10,9 +10,9 @@ using System.IO;
 
 namespace TestOnvif
 {
-    public class AVDeviceClient : MediaDeviceClient
+    public class AVProcessorClient : MediaDeviceClient
     {
-        public AVDeviceClient(MediaDevice device) : base(device) { }
+        public AVProcessorClient(MediaDevice device) : base(device) { }
 
         CodecParams inVideoParams;
 
@@ -110,7 +110,7 @@ namespace TestOnvif
 
         }
 
-        public void FFmpegStop()
+        public void Stop()
         {
             if (ffmpegMedia != null)
             {

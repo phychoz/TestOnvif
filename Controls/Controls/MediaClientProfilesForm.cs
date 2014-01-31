@@ -11,7 +11,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace TestOnvif
+namespace Onvif.Controls
 {
     public partial class MediaClientProfilesForm : Form
     {

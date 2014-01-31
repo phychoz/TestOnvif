@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
+using TestOnvif;
 
-namespace TestOnvif
+namespace Onvif.Controls
 {
     static class Program
     {
@@ -18,14 +19,14 @@ namespace TestOnvif
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(DomainUnhandledExceptionHandler);
 
             Logger.LoggingEnabled = true;
-            
+
 
             try
             {
-                MainForm form = MediaService.Instance.CreateMainForm();
-                Logger.Verbose += form.Verbose;
+                //MainForm form = MediaService.Instance.CreateMainForm();
+                //Logger.Verbose += form.Verbose;
 
-                Application.Run(form);
+                Application.Run(new MainForm());
             }
             catch (Exception e)
             {

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace TestOnvif
+namespace Onvif.Controls
 {
     public partial class RebootForm : Form
     {

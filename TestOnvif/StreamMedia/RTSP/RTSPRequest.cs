@@ -50,19 +50,19 @@ namespace TestOnvif
             };
         }
 
-        public static RTSPRequest CreateSetup(string url, int CSeq, int RTPclientPort, int RTCPclientPort)
-        {
-            return new RTSPRequest()
-            {
-                Method = "SETUP",
-                URL = url,
-                CSeq = CSeq,
-                Accept = null,
-                Transport = String.Format("RTP/AVP/UDP;unicast;client_port={0}-{1}", RTPclientPort, RTCPclientPort),
-                Session = null,
-                Range = null
-            };
-        }
+        //public static RTSPRequest CreateSetup(string url, int CSeq, int RTPclientPort, int RTCPclientPort)
+        //{
+        //    return new RTSPRequest()
+        //    {
+        //        Method = "SETUP",
+        //        URL = url,
+        //        CSeq = CSeq,
+        //        Accept = null,
+        //        Transport = String.Format("RTP/AVP/UDP;unicast;client_port={0}-{1}", RTPclientPort, RTCPclientPort),
+        //        Session = null,
+        //        Range = null
+        //    };
+        //}
 
         public static RTSPRequest CreatePlay(string url, int CSeq, string session)
         {
@@ -95,13 +95,13 @@ namespace TestOnvif
         public override string ToString()
         {
             string data = String.Format("{0} {1} RTSP/1.0\r\n", Method, URL);
-            if (Accept != null)
+            if (string.IsNullOrEmpty(Accept) == false)
                 data += String.Format("Accept: {0}\r\n", Accept);
-            if (Transport != null)
+            if (string.IsNullOrEmpty(Transport) == false)
                 data += String.Format("Transport: {0}\r\n", Transport);
-            if (Session != null)
+            if (string.IsNullOrEmpty(Session)==false)
                 data += String.Format("Session: {0}\r\n", Session);
-            if (Range != null)
+            if (string.IsNullOrEmpty(Range) == false)
                 data += String.Format("Range: {0}\r\n", Range);
             data += String.Format("CSeq: {0}\r\n", CSeq);
             data += Environment.NewLine;

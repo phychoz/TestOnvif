@@ -1,6 +1,6 @@
-﻿namespace TestOnvif
+﻿namespace Onvif.Controls
 {
-    partial class ClockForm
+    partial class WebForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,35 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.ClockLabel = new System.Windows.Forms.Label();
+            this.webBrowser = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
-            // ClockLabel
+            // webBrowser
             // 
-            this.ClockLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ClockLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ClockLabel.Location = new System.Drawing.Point(0, 0);
-            this.ClockLabel.Name = "ClockLabel";
-            this.ClockLabel.Size = new System.Drawing.Size(392, 92);
-            this.ClockLabel.TabIndex = 38;
-            this.ClockLabel.Text = "Time:";
-            this.ClockLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser.Location = new System.Drawing.Point(0, 0);
+            this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser.Name = "webBrowser";
+            this.webBrowser.Size = new System.Drawing.Size(721, 595);
+            this.webBrowser.TabIndex = 0;
             // 
-            // ClockForm
+            // WebForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(392, 92);
-            this.ControlBox = false;
-            this.Controls.Add(this.ClockLabel);
-            this.Name = "ClockForm";
-            this.Text = "RtpTime";
+            this.ClientSize = new System.Drawing.Size(721, 595);
+            this.Controls.Add(this.webBrowser);
+            this.Name = "WebForm";
+            this.Text = "WebForm";
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label ClockLabel;
+        private System.Windows.Forms.WebBrowser webBrowser;
     }
 }

@@ -10,7 +10,7 @@ namespace TestOnvif
     /// <summary>
     /// Класс для обработки потока RTP пакетов, в которых содержатся изображения JPEG
     /// </summary>
-    class RFC2435Handler:RFCHandler
+    class RFC2435PayloadHandler:PayloadHandler
     {
         const int BUFFER_SIZE = 1000000;
         /// <summary>
@@ -183,7 +183,7 @@ namespace TestOnvif
         /// </summary>
         private int bufferOffset;
 
-        public RFC2435Handler()
+        public RFC2435PayloadHandler()
         {
             Buffer.BlockCopy(jpegHeader, 0, buffer, 0, jpegHeader.Length);
             bufferOffset = jpegHeader.Length;

@@ -5,6 +5,12 @@ using System.Threading;
 
 namespace TestOnvif
 {
+    public class RTSPSessionParameters
+    {
+        //...
+        public string Session { get; set; }
+    }
+
     class RTSPSession : IDisposable
     {
         /// <summary>
@@ -16,25 +22,8 @@ namespace TestOnvif
         private int CSeq = 1;
         private TcpClient tcpClient;
         private NetworkStream networkStream;
-        private string session;
 
-        static private uint videoSSRT;
-        static private uint audioSSRT;
-
-        static private uint videoRtpTime;
-        static private uint audioRtpTime;
-
-        public static string Codec = string.Empty;
-
-        static public bool IsCurrentSessionSSRT(uint ssrt)
-        {
-            bool result = false;
-            if (ssrt == videoSSRT || ssrt == audioSSRT)
-            {
-                result = true;
-            }
-            return result;
-        }
+        public RTSPSessionParameters Parameters { get; set; } 
 
         public void Dispose()
         {
@@ -61,11 +50,13 @@ namespace TestOnvif
         {
             Uri uri = new Uri(url);
             TcpClient client = new TcpClient(uri.DnsSafeHost, RTSP_PORT);
+            
             return new RTSPSession()
             {
                 uri = new Uri(url),
                 tcpClient = client,
-                networkStream = client.GetStream()
+                networkStream = client.GetStream(),
+                Parameters =new RTSPSessionParameters()
             };
         }
 
@@ -79,68 +70,23 @@ namespace TestOnvif
             }
         }
 
-        public void StartTranslation(int RtpVideoPort, int RtcpVideoPort, int RtpAudioPort, int RtcpAudioPort)
+        public RTSPResponse Options()
         {
-            RTSPResponse respons;
+            return Send(RTSPRequest.CreateOptions(uri.AbsoluteUri, CSeq));
+        }
 
-            // OPTIONS возвращает команды сервера
-            // OPTIONS, DESCRIBE, SETUP, PLAY, PAUSE, GET_PARAMETER, TEARDOWN, SET_PARAMETER
-            respons = Send(RTSPRequest.CreateOptions(uri.AbsoluteUri, CSeq));
+        public RTSPResponse Describe()
+        {
+            return Send(RTSPRequest.CreateDescribe(uri.AbsoluteUri, CSeq));
+        }
 
-            OnRTSPServerResponse("OPTIONS");
-
-            // DESCRIBE возвращает SDP файл 
-            respons = Send(RTSPRequest.CreateDescribe(uri.AbsoluteUri, CSeq));
-
-            string ContentBase = respons.ContentBase;
-
-            // Парсим SDP пакет
-            SDP sdp = SDP.Parse(respons.Body);
-
-            MediaDescription VideoMediaDescription = sdp.Session.GetMediaDescriptionByName("video");
-
-            string VideoControl = VideoMediaDescription.GetAttributeValueByName("control");
-
-            MediaDescription AudioMediaDescription = sdp.Session.GetMediaDescriptionByName("audio");
-
-            string AudioControl = AudioMediaDescription.GetAttributeValueByName("control");
-
-            string VideoSetupUri = String.Format("{0}{1}", ContentBase, VideoControl);
-            string AudioSetupUri = String.Format("{0}{1}", ContentBase, AudioControl);
-
-
-            respons = Send(RTSPRequest.CreateSetup(VideoSetupUri, CSeq, RtpVideoPort, RtcpVideoPort));
-
-            session = respons.Session;
-
-            videoSSRT = respons.SSRT;
-
-            respons = Send(RTSPRequest.CreateSetup(AudioSetupUri, CSeq, RtpAudioPort, RtcpAudioPort, session));
-            audioSSRT = respons.SSRT;
-
-            respons = Send(RTSPRequest.CreatePlay(uri.AbsoluteUri, CSeq, session));
-
-            videoRtpTime = respons.RtpTracks[0].RTPTime;
-            audioRtpTime = respons.RtpTracks[1].RTPTime;
-
-            string RtpmapAttribute = VideoMediaDescription.GetAttributeValueByName("rtpmap");
-            if (string.IsNullOrEmpty(RtpmapAttribute) == false)
-            {
-                string[] split = RtpmapAttribute.Split(' ');
-                if (split.Length == 2)
-                {
-                    string[] values = split[1].Split('/');
-                    Codec = values[0];
-                    string bitrare=values[1];
-
-                    
-
-                }
-            }
-
-            OnRTSPServerResponse("play");
-            
-
+        public RTSPResponse Setup(string url, int RTPClientPort, int RTCPClientPort, string session="")
+        {
+            return Send(RTSPRequest.CreateSetup(url, CSeq, RTPClientPort, RTCPClientPort, session));
+        }
+        public RTSPResponse Play(string session)
+        {
+            return Send(RTSPRequest.CreatePlay(uri.AbsoluteUri, CSeq, session));
         }
 
         public void Teardown()
@@ -151,8 +97,9 @@ namespace TestOnvif
             if (localPath[localPath.Length - 1] != '/')
                 localPath += '/';
 
-            Send(RTSPRequest.CreateTeardown(String.Format("rtsp://{0}{1}", uri.DnsSafeHost, localPath), CSeq, session));
+            Send(RTSPRequest.CreateTeardown(String.Format("rtsp://{0}{1}", uri.DnsSafeHost, localPath), CSeq, this.Parameters.Session));
         }
+
 
         private RTSPResponse Send(RTSPRequest request)
         {            
@@ -167,16 +114,5 @@ namespace TestOnvif
                 return resp;
             }
         }
-
-        private void OnRTSPServerResponse(string command)
-        {
-            if(RTSPServerResponse!=null)
-                RTSPServerResponse(command);
-        }
-
-        public event RTSPResponseHandler  RTSPServerResponse;
-
-        public delegate void RTSPResponseHandler(string command); //ReceiveUdpPacketHandler(IPEndPoint remoteEndPoint, IntPtr data, int count);
-
     }
 }

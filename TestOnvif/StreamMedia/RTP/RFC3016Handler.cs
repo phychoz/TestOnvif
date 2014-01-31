@@ -10,7 +10,7 @@ namespace TestOnvif
     /// RTP Payload Format for MPEG-4 Audio/Visual Streams
     /// http://tools.ietf.org/rfc/rfc3016.txt
     /// </summary>
-    class RFC3016Handler:RFCHandler
+    class RFC3016PayloadHandler:PayloadHandler
     {
         /// <summary>
         /// Приемный буффер, подбирается под размет принимаемого фрейма

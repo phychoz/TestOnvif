@@ -26,7 +26,7 @@ namespace TestOnvif
             Zero or more media descriptions (see below)
    */
 
-    class SessionDescription
+    public class SessionDescription
     {
         public string ProtocolVersion { get; private set; }
 

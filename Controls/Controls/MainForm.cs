@@ -8,7 +8,10 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Net;
-namespace TestOnvif
+
+using TestOnvif;
+
+namespace Onvif.Controls
 {
     public partial class MainForm : Form, IMediaForm
     {
@@ -50,7 +53,7 @@ namespace TestOnvif
 
         }
 
-        public void BindMediaProfileCollection(deviceio.Profile [] profiles) 
+        public void BindMediaProfileCollection(TestOnvif.deviceio.Profile[] profiles)
         {
             BindingSource binding = new BindingSource()
             {
@@ -75,7 +78,7 @@ namespace TestOnvif
 
         private void VideoStartButton_Click(object sender, EventArgs e)
         {
-            deviceio.Profile profile = this.MediaProfileComboBox.SelectedValue as deviceio.Profile;
+            TestOnvif.deviceio.Profile profile = this.MediaProfileComboBox.SelectedValue as TestOnvif.deviceio.Profile;
 
             if (profile != null)
             {
@@ -222,6 +225,7 @@ namespace TestOnvif
         private void MainForm_Load(object sender, EventArgs e)
         {
             MediaService.Instance.FindDevices();
+
         }
 
         private void DisconnectButton_Click(object sender, EventArgs e)

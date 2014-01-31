@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace TestOnvif
 {
-    interface IMediaForm
+    public interface IMediaForm
     {
         void UpdateControls();
     }
@@ -20,10 +20,10 @@ namespace TestOnvif
         void UpdateControls();
     }
 
-    class MediaService : IDisposable, IMediaFormManager
+    public class MediaService : IDisposable// , IMediaFormManager
     {
         private static MediaService service = null;
-        private MediaService()  { MediaFormManager = this; }
+        //private MediaService()  { MediaFormManager = this; }
 
         public static MediaService Instance
         {
@@ -47,11 +47,11 @@ namespace TestOnvif
         /// </summary>
          MediaDevice mediaDevice;
 
-         VideoForm videoForm;
-         MainForm mainForm;
+         //VideoForm videoForm;
+         //MainForm mainForm;
 
-         IMediaFormManager MediaFormManager = null;
-         List<IMediaForm> MediaForms = new List<IMediaForm>();
+         //IMediaFormManager MediaFormManager = null;
+         //List<IMediaForm> MediaForms = new List<IMediaForm>();
  
 
         public MediaDevice[] MediaDeviceCollection
@@ -67,13 +67,13 @@ namespace TestOnvif
         }
 
 
-        public MainForm CreateMainForm()
-        {
-            mainForm =new MainForm();
-            MediaFormManager.AddForm(mainForm);
+        //public MainForm CreateMainForm()
+        //{
+        //    mainForm =new MainForm();
+        //    MediaFormManager.AddForm(mainForm);
 
-            return mainForm;
-        }
+        //    return mainForm;
+        //}
 
         private bool isConnected = false;
         private bool isStreaming = false;
@@ -94,9 +94,38 @@ namespace TestOnvif
         {
             mediaDeviceCollection = ONVIFClient.GetAvailableMediaDevices();
 
-            mainForm.BindMediaDeviceCollection(mediaDeviceCollection);
+            //mainForm.BindMediaDeviceCollection(mediaDeviceCollection);
 
-            MediaFormManager.UpdateControls();
+            //MediaFormManager.UpdateControls();
+        }
+
+        public event EventHandler Connected;
+        public event EventHandler Disconnected;
+        public event EventHandler CaptureStarted;
+        public event EventHandler CaptureStoped;
+
+        private void OnConnected()
+        {
+            if (Connected != null)
+                Connected(this, new EventArgs ());
+        }
+
+        private void OnDisonnected()
+        {
+            if (Disconnected != null)
+                Disconnected(this, new EventArgs());
+        }
+
+        private void OnCaptureStarted()
+        {
+            if (CaptureStarted != null)
+                CaptureStarted(this, new EventArgs());
+        }
+
+        private void OnCaptureStoped()
+        {
+            if (CaptureStoped != null)
+                CaptureStoped(this, new EventArgs());
         }
 
         public void Connect(MediaDevice device, string login, string password)
@@ -105,17 +134,19 @@ namespace TestOnvif
             {
                 device.ONVIFClient.Connect(login, password);
 
-                deviceio.Profile[] profiles = device.ONVIFClient.MediaProfiles;
+                //deviceio.Profile[] profiles = device.ONVIFClient.MediaProfiles;
 
-                mainForm.BindMediaProfileCollection(profiles);
+               // mainForm.BindMediaProfileCollection(profiles);
 
                 mediaDevice = device;
 
                 isConnected = true;
 
+                OnConnected();
+
             }
 
-            MediaFormManager.UpdateControls();
+           // MediaFormManager.UpdateControls();
         }
 
         public void Disconnect() 
@@ -127,16 +158,18 @@ namespace TestOnvif
                     //...
                     Stop();
                     isConnected = false;
+                    OnDisonnected();
                 }
                 else
                 {
                     //...
                     isConnected = false;
+                    OnDisonnected();
                 }
                 //...
             }
 
-            MediaFormManager.UpdateControls();
+            //MediaFormManager.UpdateControls();
         }
 
 
@@ -145,25 +178,27 @@ namespace TestOnvif
             if (isConnected == true && isStreaming == false)
             {
                 mediaDevice.ONVIFClient.CurrentMediaProfile = profile;
-                isStreaming = mediaDevice.StartMedia();
+                isStreaming = mediaDevice.Start();
 
-                string uri = mediaDevice.ONVIFClient.GetCurrentMediaProfileRtspStreamUri().AbsoluteUri;
-                string filename = mediaDevice.AVProcessor.FFmpegMedia.OutputFilename;
+                OnCaptureStarted();
 
-                int width = mediaDevice.AVProcessor.InVideoParams.Width;
-                int height = mediaDevice.AVProcessor.InVideoParams.Height;
+                //string uri = mediaDevice.ONVIFClient.GetCurrentMediaProfileRtspStreamUri().AbsoluteUri;
+                //string filename = mediaDevice.AVProcessor.FFmpegMedia.OutputFilename;
 
-                videoForm = new VideoForm(uri, filename, width, height);
-                if (videoForm != null)
-                {
-                    mediaDevice.AVProcessor.ShowVideo += videoForm.ShowVideo;
-                    mediaDevice.AVProcessor.PlayAudio += videoForm.PlayAudio;
+                //int width = mediaDevice.AVProcessor.InVideoParams.Width;
+                //int height = mediaDevice.AVProcessor.InVideoParams.Height;
 
-                    MediaFormManager.AddForm(videoForm);
+                //videoForm = new VideoForm(uri, filename, width, height);
+                //if (videoForm != null)
+                //{
+                //    mediaDevice.AVProcessor.ShowVideo += videoForm.ShowVideo;
+                //    mediaDevice.AVProcessor.PlayAudio += videoForm.PlayAudio;
 
-                    videoForm.Show();
-                }
-                MediaFormManager.UpdateControls();
+                //    MediaFormManager.AddForm(videoForm);
+
+                //    videoForm.Show();
+                //}
+                //MediaFormManager.UpdateControls();
 
             }
         }
@@ -172,198 +207,199 @@ namespace TestOnvif
         {
             if (isConnected == true && isStreaming == true)
             {
-                mediaDevice.StopMedia();
+                mediaDevice.Stop();
                 isStreaming = false;
 
-                if (videoForm != null)
-                {
-                    mediaDevice.AVProcessor.ShowVideo -= videoForm.ShowVideo;
-                    mediaDevice.AVProcessor.PlayAudio -= videoForm.PlayAudio;
+                OnCaptureStoped();
+                //if (videoForm != null)
+                //{
+                //    mediaDevice.AVProcessor.ShowVideo -= videoForm.ShowVideo;
+                //    mediaDevice.AVProcessor.PlayAudio -= videoForm.PlayAudio;
 
-                    videoForm.Close();
-                    MediaFormManager.RemoveForm(videoForm);
-                };
+                //    videoForm.Close();
+                //    MediaFormManager.RemoveForm(videoForm);
+                //};
 
-                MediaFormManager.UpdateControls();
+                //MediaFormManager.UpdateControls();
                 
             }
         }
 
-        public void AddForm(IMediaForm form)
+        //public void AddForm(IMediaForm form)
+        //{
+        //    MediaForms.Add(form);
+        //}
+
+        //public void RemoveForm(IMediaForm form)
+        //{
+        //    MediaForms.Remove(form);
+        //}
+
+        //public void UpdateControls()
+        //{
+        //    foreach (IMediaForm form in MediaForms)
+        //    {
+        //        form.UpdateControls();
+        //    }
+        //}
+
+        public object ExecuteCommand(string command, object [] parameters=null)
         {
-            MediaForms.Add(form);
-        }
+            //if (IsConnected == true)
+            //{
+            //    switch (command)
+            //    {
+            //        case "GetDeviceInformation":
+            //            {
+            //                MessageBox.Show(mediaDevice.ONVIFClient.GetDeviceInformation());
+            //                break;
+            //            }
+            //        case "GetSystemDateAndTime":
+            //            {
+            //                string nowTimeString = DateTime.Now.ToString("HH:mm:ss.fff");
 
-        public void RemoveForm(IMediaForm form)
-        {
-            MediaForms.Remove(form);
-        }
+            //                string mediaTimeString = string.Empty;
 
-        public void UpdateControls()
-        {
-            foreach (IMediaForm form in MediaForms)
-            {
-                form.UpdateControls();
-            }
-        }
+            //                DateTime? media = mediaDevice.ONVIFClient.GetSystemDateAndTime();
 
-        public bool ExecuteCommand(string command)
-        {
-            if (IsConnected == true)
-            {
-                switch (command)
-                {
-                    case "GetDeviceInformation":
-                        {
-                            MessageBox.Show(mediaDevice.ONVIFClient.GetDeviceInformation());
-                            break;
-                        }
-                    case "GetSystemDateAndTime":
-                        {
-                            string nowTimeString = DateTime.Now.ToString("HH:mm:ss.fff");
+            //                if (media != null)
+            //                    mediaTimeString = ((DateTime)media).ToString("HH:mm:ss.fff");
 
-                            string mediaTimeString = string.Empty;
+            //                string message = string.Format("now={0}; media={1}", nowTimeString, mediaTimeString);
+            //                Logger.Write(message, EnumLoggerType.Output);
 
-                            DateTime? media = mediaDevice.ONVIFClient.GetSystemDateAndTime();
+            //                break;
+            //            }
+            //        case "SetDateTime":
+            //            {
+            //                if (mediaDevice != null)
+            //                {
+            //                    BackgroundWorker worker = new BackgroundWorker();
+            //                    worker.DoWork += (obj, arg) =>
+            //                    {
+            //                        mediaDevice.ONVIFClient.SetSystemDateAndTime(DateTime.Now);
+            //                    };
+            //                    worker.RunWorkerCompleted += (obj, arg) =>
+            //                    {
+            //                        mainForm.Enabled = true;
+            //                        mainForm.Cursor = Cursors.Default;
+            //                    };
+            //                    worker.RunWorkerAsync();
+            //                    mainForm.Cursor = Cursors.WaitCursor;
+            //                    mainForm.Enabled = false;
+            //                }
+            //                break;
+            //            }
+            //        case "SetDateTimefromNtp":
+            //            {
+            //                if (mediaDevice != null)
+            //                {
+            //                    BackgroundWorker worker = new BackgroundWorker();
+            //                    worker.DoWork += (obj, arg) =>
+            //                    {
+            //                        mediaDevice.ONVIFClient.SetSystemDateAndTimeNTP("192.168.10.251", "UTC-4");
+            //                    };
+            //                    worker.RunWorkerCompleted += (obj, arg) =>
+            //                    {
+            //                        mainForm.Enabled = true;
+            //                        mainForm.Cursor = Cursors.Default;
+            //                    };
 
-                            if (media != null)
-                                mediaTimeString = ((DateTime)media).ToString("HH:mm:ss.fff");
+            //                    worker.RunWorkerAsync();
+            //                    Logger.Write(String.Format("SetSystemDateAndTimeNTP"), EnumLoggerType.DebugLog);
+            //                    mainForm.Cursor = Cursors.WaitCursor;
+            //                    mainForm.Enabled = false;
 
-                            string message = string.Format("now={0}; media={1}", nowTimeString, mediaTimeString);
-                            Logger.Write(message, EnumLoggerType.Output);
+            //                }
+            //                break;
+            //            }
+            //        case "MediaClientGetProfiles":
+            //            {
+            //                MediaClientProfilesForm mcpf = new MediaClientProfilesForm(mediaDevice.ONVIFClient.MediaProfiles);
+            //                mcpf.ShowDialog();
+            //                break;
+            //            }
+            //        case "GetHostname":
+            //            {
+            //                MessageBox.Show(mediaDevice.ONVIFClient.GetHostname());
+            //                break;
+            //            }
+            //        case "Reboot":
+            //            {
+            //                if (MessageBox.Show("Reboot will take 2 minutes\nYou are sure that want to reboot device now?", "",
+            //                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            //                {
+            //                    string message = mediaDevice.ONVIFClient.Reboot();
+            //                    using (RebootForm rf = new RebootForm(message))
+            //                    {
+            //                        //
+            //                        rf.ShowDialog();
+            //                    }
+            //                }
+            //                break;
+            //            }
+            //        default:
+            //            //...
+            //            break;
+            //    }
+            //}
 
-                            break;
-                        }
-                    case "SetDateTime":
-                        {
-                            if (mediaDevice != null)
-                            {
-                                BackgroundWorker worker = new BackgroundWorker();
-                                worker.DoWork += (obj, arg) =>
-                                {
-                                    mediaDevice.ONVIFClient.SetSystemDateAndTime(DateTime.Now);
-                                };
-                                worker.RunWorkerCompleted += (obj, arg) =>
-                                {
-                                    mainForm.Enabled = true;
-                                    mainForm.Cursor = Cursors.Default;
-                                };
-                                worker.RunWorkerAsync();
-                                mainForm.Cursor = Cursors.WaitCursor;
-                                mainForm.Enabled = false;
-                            }
-                            break;
-                        }
-                    case "SetDateTimefromNtp":
-                        {
-                            if (mediaDevice != null)
-                            {
-                                BackgroundWorker worker = new BackgroundWorker();
-                                worker.DoWork += (obj, arg) =>
-                                {
-                                    mediaDevice.ONVIFClient.SetSystemDateAndTimeNTP("192.168.10.251", "UTC-4");
-                                };
-                                worker.RunWorkerCompleted += (obj, arg) =>
-                                {
-                                    mainForm.Enabled = true;
-                                    mainForm.Cursor = Cursors.Default;
-                                };
+            //switch (command)
+            //{
+            //    case "WsDicovery":
+            //        {
+            //            BackgroundWorker worker = new BackgroundWorker();
 
-                                worker.RunWorkerAsync();
-                                Logger.Write(String.Format("SetSystemDateAndTimeNTP"), EnumLoggerType.DebugLog);
-                                mainForm.Cursor = Cursors.WaitCursor;
-                                mainForm.Enabled = false;
+            //            worker.DoWork += (s, arg) =>
+            //            {
+            //                mediaDeviceCollection = ONVIFClient.GetAvailableMediaDevices();
+            //            };
 
-                            }
-                            break;
-                        }
-                    case "MediaClientGetProfiles":
-                        {
-                            MediaClientProfilesForm mcpf = new MediaClientProfilesForm(mediaDevice.ONVIFClient.MediaProfiles);
-                            mcpf.ShowDialog();
-                            break;
-                        }
-                    case "GetHostname":
-                        {
-                            MessageBox.Show(mediaDevice.ONVIFClient.GetHostname());
-                            break;
-                        }
-                    case "Reboot":
-                        {
-                            if (MessageBox.Show("Reboot will take 2 minutes\nYou are sure that want to reboot device now?", "",
-                                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-                            {
-                                string message = mediaDevice.ONVIFClient.Reboot();
-                                using (RebootForm rf = new RebootForm(message))
-                                {
-                                    //
-                                    rf.ShowDialog();
-                                }
-                            }
-                            break;
-                        }
-                    default:
-                        //...
-                        break;
-                }
-            }
+            //            worker.RunWorkerCompleted += (s, arg) =>
+            //            {
+            //                if (mediaDeviceCollection != null)
+            //                {
+            //                    DiscoverForm df = new DiscoverForm();
+            //                    df.ShowDialog();
+            //                }
 
-            switch (command)
-            {
-                case "WsDicovery":
-                    {
-                        BackgroundWorker worker = new BackgroundWorker();
+            //                mainForm.Cursor = Cursors.Default;
+            //                // WsDicoveryButton.Enabled = true;
 
-                        worker.DoWork += (s, arg) =>
-                        {
-                            mediaDeviceCollection = ONVIFClient.GetAvailableMediaDevices();
-                        };
+            //            };
 
-                        worker.RunWorkerCompleted += (s, arg) =>
-                        {
-                            if (mediaDeviceCollection != null)
-                            {
-                                DiscoverForm df = new DiscoverForm();
-                                df.ShowDialog();
-                            }
-
-                            mainForm.Cursor = Cursors.Default;
-                            // WsDicoveryButton.Enabled = true;
-
-                        };
-
-                        worker.RunWorkerAsync();
-                        //WsDicoveryButton.Enabled = false;
-                        mainForm.Cursor = Cursors.WaitCursor;
-                        break;
-                    }
-                case "ShowWebForm":
-                    {
-                        WebForm form = new WebForm(new Uri(@"http://192.168.10.203/admin/index.html"));
-                        form.Show();
-                        break;
-                    }
-                default:
-                    //...
-                    break;
-            }
+            //            worker.RunWorkerAsync();
+            //            //WsDicoveryButton.Enabled = false;
+            //            mainForm.Cursor = Cursors.WaitCursor;
+            //            break;
+            //        }
+            //    case "ShowWebForm":
+            //        {
+            //            WebForm form = new WebForm(new Uri(@"http://192.168.10.203/admin/index.html"));
+            //            form.Show();
+            //            break;
+            //        }
+            //    default:
+            //        //...
+            //        break;
+            //}
 
             return true;
         }
 
         public void Dispose()
         {
-            if (videoForm != null)
-            {
-                videoForm.Dispose();
-                videoForm = null;
-            }
+            //if (videoForm != null)
+            //{
+            //    videoForm.Dispose();
+            //    videoForm = null;
+            //}
 
-            if (mainForm != null)
-            {
-                mainForm.Dispose();
-                mainForm = null;
-            }
+            //if (mainForm != null)
+            //{
+            //    mainForm.Dispose();
+            //    mainForm = null;
+            //}
         }
 
     }

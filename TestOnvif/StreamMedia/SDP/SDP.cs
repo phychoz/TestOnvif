@@ -9,7 +9,7 @@ namespace TestOnvif
     /// Класс для объектного представления данных в формате SDP
     /// <see cref="http://www.faqs.org/rfcs/rfc2327.html"/>
     /// </summary>
-    class SDP
+    public class SDP
     {
         private SDP()
         {
@@ -37,4 +37,53 @@ namespace TestOnvif
             return sdp;
         }
     }
+
+    public static class exSDP
+    {
+        public static string GetCodec(this SDP sdp, string MediaType)
+        {
+            string codec = string.Empty;
+
+            MediaDescription description = sdp.Session.GetMediaDescriptionByName(MediaType);
+
+            string attribute = description.GetAttributeValueByName("rtpmap");
+            if (string.IsNullOrEmpty(attribute) == false)
+            {
+                string[] split = attribute.Split(' ');
+                if (split.Length == 2)
+                {
+                    string[] values = split[1].Split('/');
+                    codec = values[0];
+                }
+            }
+            return codec;
+        }
+
+        public static int GetSampleRate(this SDP sdp, string MediaType)
+        {
+            int result = int.MaxValue;
+
+            MediaDescription description = sdp.Session.GetMediaDescriptionByName(MediaType);
+
+            string attribute = description.GetAttributeValueByName("rtpmap");
+            if (string.IsNullOrEmpty(attribute) == false)
+            {
+                string[] split = attribute.Split(' ');
+                if (split.Length == 2)
+                {
+                    string[] values = split[1].Split('/');
+                    string str = values[1];
+
+                    int.TryParse(str, out result);
+                }
+            }
+
+            return result;
+        }
+
+        public static string GetControl(this SDP sdp, string MediaType)
+        {
+            return sdp.Session.GetMediaDescriptionByName(MediaType).GetAttributeValueByName("control");
+        }
+    }   
 }

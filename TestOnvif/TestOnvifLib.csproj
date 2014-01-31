@@ -6,13 +6,28 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{38BB0AE9-1407-4699-9283-9AFD837271D4}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TestOnvif</RootNamespace>
     <AssemblyName>TestOnvif</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -30,7 +45,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -45,6 +60,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Emgu.CV, Version=2.4.0.1717, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
@@ -74,55 +92,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AVDeviceClient.cs" />
+    <Compile Include="AVProcessorClient.cs" />
+    <Compile Include="RTSPChannel.cs" />
     <Compile Include="StreamMedia\RTP\RFCHandler.cs" />
     <Compile Include="StreamMedia\SDP\MediaDescription.cs" />
     <Compile Include="StreamMedia\SDP\SessionDescription.cs" />
     <Compile Include="StreamMedia\SDP\TimeDescription.cs" />
     <Compile Include="Tools\CameraDateTime.cs" />
     <Compile Include="Tools\CircularBuffer.cs" />
-    <Compile Include="Controls\ClockForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\ClockForm.Designer.cs">
-      <DependentUpon>ClockForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DiscoverForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\DiscoverForm.Designer.cs">
-      <DependentUpon>DiscoverForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\MediaClientProfilesForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\MediaClientProfilesForm.Designer.cs">
-      <DependentUpon>MediaClientProfilesForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="MediaService.cs" />
     <Compile Include="ONVIFClient.cs" />
-    <Compile Include="Controls\RebootForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\RebootForm.Designer.cs">
-      <DependentUpon>RebootForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="MediaStreamClient.cs" />
     <Compile Include="StreamMedia\Audio\G711Decoder.cs" />
     <Compile Include="StreamMedia\Audio\WaveBuilder.cs" />
     <Compile Include="Tools\BigEndian.cs" />
-    <Compile Include="Controls\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Tools\Logger.cs" />
     <Compile Include="MediaDevice.cs" />
     <Compile Include="Tools\Security\PasswordDigestBehavior.cs" />
     <Compile Include="Tools\Security\PasswordDigestMessageInspector.cs" />
     <Compile Include="StreamMedia\Audio\PCMUPlayer.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StreamMedia\RTCP\RtcpRecieverReportPacket.cs" />
     <Compile Include="StreamMedia\RTP\RFC2435Handler.cs" />
@@ -165,30 +153,6 @@
     <Compile Include="StreamMedia\Transport\UnicastUdpReceiver.cs" />
     <Compile Include="Tools\Security\UsernameToken.cs" />
     <Compile Include="StreamMedia\Audio\WinMM.cs" />
-    <Compile Include="Controls\VideoForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\VideoForm.Designer.cs">
-      <DependentUpon>VideoForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\WebForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\WebForm.Designer.cs">
-      <DependentUpon>WebForm.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Controls\ClockForm.resx">
-      <DependentUpon>ClockForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DiscoverForm.resx">
-      <DependentUpon>DiscoverForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MediaClientProfilesForm.resx">
-      <DependentUpon>MediaClientProfilesForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -198,15 +162,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Controls\RebootForm.resx">
-      <DependentUpon>RebootForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\VideoForm.resx">
-      <DependentUpon>VideoForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\WebForm.resx">
-      <DependentUpon>WebForm.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\DataSources\System.Xml.XmlElement.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -683,10 +638,31 @@
   <ItemGroup>
     <ProjectReference Include="..\FFmpegRTSPCppCLR\FFmpegRTSPCppCLR.vcxproj">
       <Project>{13CF301F-951F-47A4-A9A5-5E54D70AC2D6}</Project>
-      <Name>FFmpegRTSPCppCLR</Name>
+      <Name>TestFFmpegLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -10,10 +10,11 @@ using System.Drawing.Imaging;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using TestOnvif;
 
-namespace TestOnvif
+namespace Onvif.Controls
 {
-    public partial class VideoForm : Form,IMediaForm
+    public partial class VideoForm : Form, IMediaForm
     {
         PCMUPlayer audioPlayer;
 

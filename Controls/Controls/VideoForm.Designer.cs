@@ -1,6 +1,6 @@
-﻿namespace TestOnvif
+﻿namespace Onvif.Controls
 {
-    partial class WebForm
+    partial class VideoForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,32 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.webBrowser = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
-            // webBrowser
-            // 
-            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser.Location = new System.Drawing.Point(0, 0);
-            this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser.Name = "webBrowser";
-            this.webBrowser.Size = new System.Drawing.Size(721, 595);
-            this.webBrowser.TabIndex = 0;
-            // 
-            // WebForm
+            // VideoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(721, 595);
-            this.Controls.Add(this.webBrowser);
-            this.Name = "WebForm";
-            this.Text = "WebForm";
+            this.ClientSize = new System.Drawing.Size(632, 453);
+            this.ControlBox = false;
+            this.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.DoubleBuffered = true;
+            this.Name = "VideoForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "VideoForm";
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.WebBrowser webBrowser;
+
     }
 }

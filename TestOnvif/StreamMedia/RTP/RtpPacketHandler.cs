@@ -12,6 +12,12 @@ namespace TestOnvif
     /// </summary>
     public class RtpPacketHandler
     {
+        public RtpPacketHandler(uint ssrc)
+        {
+            SSRC = ssrc;
+        }
+
+        private uint SSRC;
         /// <summary>
         /// Маска для извлечения версии заголовка
         /// </summary>
@@ -74,8 +80,7 @@ namespace TestOnvif
             offset += 4;
             packet.SSRC = BigEndian.ReadUInt32((void*)(data + offset));
 
-            if (RTSPSession.IsCurrentSessionSSRT(packet.SSRC) == false)
-                return;
+            //if (packet.SSRC != SSRC) return; // пакеты другой сессии
 
             if (packet.HasExtension)
             {

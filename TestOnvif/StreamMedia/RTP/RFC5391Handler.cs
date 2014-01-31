@@ -10,7 +10,7 @@ namespace TestOnvif
     /// RTP Payload Format for ITU-T Recommendation G.711.1
     /// http://tools.ietf.org/rfc/rfc5391.txt
     /// </summary>
-    class RFC5391Handler : RFCHandler
+    class RFC5391PayloadHandler : PayloadHandler
     {
         //public event AudioDataReceivedHandler AudioDataReceived;
         //public delegate void AudioDataReceivedHandler(byte [] data);

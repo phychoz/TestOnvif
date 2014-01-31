@@ -42,9 +42,9 @@ namespace TestOnvif
             MediaDeviceUri = uri;
             DisplayName = name;
 
-            StreamClient = new MediaStreamClient(this);
+            mediaStreamClient = new MediaStreamClient(this);
             onvifClient = new ONVIFClient(this);
-            avProcessor = new AVDeviceClient(this);
+            avProcessorClient = new AVProcessorClient(this);
         }
 
         private string displayName = string.Empty;
@@ -57,21 +57,21 @@ namespace TestOnvif
 
         private Uri mediaDeviceUri;
 
-        private MediaStreamClient StreamClient;
+        private MediaStreamClient mediaStreamClient;
         private ONVIFClient onvifClient;
 
-        private AVDeviceClient avProcessor;
+        private AVProcessorClient avProcessorClient;
 
-        public AVDeviceClient AVProcessor
+        public AVProcessorClient AVProcessor
         {
-            get { return avProcessor; }
-            set { avProcessor = value; }
+            get { return avProcessorClient; }
+            set { avProcessorClient = value; }
         }
 
         public MediaStreamClient streamClient
         {
-            get { return StreamClient; }
-            set { StreamClient = value; }
+            get { return mediaStreamClient; }
+            set { mediaStreamClient = value; }
         }
 
         public Uri MediaDeviceUri
@@ -86,52 +86,19 @@ namespace TestOnvif
             set { onvifClient = value; }
         }
 
-        public bool StartMedia()
+        public bool Start()
         {
-            bool result = false;
-            try
-            {
-                avProcessor.Start();
+            avProcessorClient.Start();
+            mediaStreamClient.Start();
 
-                //StreamClient.AudioChannel.DataRecieved+= avProcessor.AudioDataRecieved;
-                //StreamClient.VideoChannel.DataRecieved += avProcessor.VideoDataRecieved;
-
-                StreamClient.StartRecieving();
-
-                result = true;
-            }
-            catch (Exception exception)
-            {
-                avProcessor.FFmpegMedia = null;
-
-                System.Windows.Forms.MessageBox.Show(exception.Message);
-                Logger.Write(exception);
-            }
-
-            return result;
+            return true;
         }
 
 
-        public void StopMedia()
+        public void Stop()
         {
-            try
-            {
-                StreamClient.StopRecieving();
-
-                //StreamClient.AudioChannel.DataRecieved -= avProcessor.AudioDataRecieved;
-                //StreamClient.VideoChannel.DataRecieved -= avProcessor.VideoDataRecieved;
-
-                avProcessor.FFmpegStop();
-
-                //VideoFormStop();
-
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show(ex.Message);
-                Logger.Write(ex);
-            }
-
+            mediaStreamClient.Stop();
+            avProcessorClient.Stop();
         }
 
     }

@@ -1,6 +1,6 @@
-﻿namespace TestOnvif
+﻿namespace Onvif.Controls
 {
-    partial class MediaClientProfilesForm
+    partial class ClockForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,32 +28,35 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.MediaProfilesTreeView = new System.Windows.Forms.TreeView();
+            this.ClockLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // MediaProfilesTreeView
+            // ClockLabel
             // 
-            this.MediaProfilesTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MediaProfilesTreeView.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.MediaProfilesTreeView.Location = new System.Drawing.Point(0, 0);
-            this.MediaProfilesTreeView.Name = "MediaProfilesTreeView";
-            this.MediaProfilesTreeView.Size = new System.Drawing.Size(492, 573);
-            this.MediaProfilesTreeView.TabIndex = 0;
+            this.ClockLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ClockLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ClockLabel.Location = new System.Drawing.Point(0, 0);
+            this.ClockLabel.Name = "ClockLabel";
+            this.ClockLabel.Size = new System.Drawing.Size(392, 92);
+            this.ClockLabel.TabIndex = 38;
+            this.ClockLabel.Text = "Time:";
+            this.ClockLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // MediaClientProfilesForm
+            // ClockForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(492, 573);
-            this.Controls.Add(this.MediaProfilesTreeView);
-            this.Name = "MediaClientProfilesForm";
-            this.Text = "MediaClientProfilesForm";
+            this.ClientSize = new System.Drawing.Size(392, 92);
+            this.ControlBox = false;
+            this.Controls.Add(this.ClockLabel);
+            this.Name = "ClockForm";
+            this.Text = "RtpTime";
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TreeView MediaProfilesTreeView;
+        private System.Windows.Forms.Label ClockLabel;
     }
 }

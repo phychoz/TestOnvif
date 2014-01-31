@@ -7,7 +7,7 @@ using System.Net.NetworkInformation;
 
 namespace TestOnvif
 {
-    abstract class RFCHandler
+    abstract class PayloadHandler
     {
         public abstract void HandleRtpPacket(RtpPacket packet);
 
@@ -20,27 +20,27 @@ namespace TestOnvif
         }
     }
 
-    class RFCHandlerFactory
+    class PayloadHandlerFactory
     {
-        public static RFCHandler Create(string RfcHandlerName)
+        public static PayloadHandler Create(string RfcHandlerName)
         {
-            RFCHandler handler = null;
+            PayloadHandler handler = null;
             switch (RfcHandlerName)
             {
                 case "JPEG":
-                    handler = new RFC2435Handler();
+                    handler = new RFC2435PayloadHandler();
                     break;
 
                 case "MP4V-ES":
-                    handler = new RFC3016Handler();
+                    handler = new RFC3016PayloadHandler();
                     break;
 
                 case "H264":
-                    handler = new RFC3984Handler();
+                    handler = new RFC3984PayloadHandler();
                     break;
 
-                case "G711":
-                    handler = new RFC5391Handler();
+                case "PCMU":
+                    handler = new RFC5391PayloadHandler();
                     break;
 
                 default:

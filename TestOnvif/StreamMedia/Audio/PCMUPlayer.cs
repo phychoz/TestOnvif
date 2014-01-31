@@ -10,7 +10,7 @@ namespace TestOnvif
     /// <summary>
     /// Класс для вывода звуковых данных в формате PCMU в микшер
     /// </summary>
-    class PCMUPlayer
+    public class PCMUPlayer
     {
         private IntPtr ptrWaveOut;
 
