@@ -8,17 +8,17 @@ using System.ComponentModel;
 
 namespace TestOnvif
 {
-    public interface IMediaForm
-    {
-        void UpdateControls();
-    }
+    //public interface IMediaForm
+    //{
+    //    void UpdateControls();
+    //}
 
-    interface IMediaFormManager
-    {
-        void AddForm(IMediaForm form);
-        void RemoveForm(IMediaForm form);
-        void UpdateControls();
-    }
+    //interface IMediaFormManager
+    //{
+    //    void AddForm(IMediaForm form);
+    //    void RemoveForm(IMediaForm form);
+    //    void UpdateControls();
+    //}
 
     public class MediaService : IDisposable// , IMediaFormManager
     {
@@ -90,13 +90,11 @@ namespace TestOnvif
             set { isStreaming = value; }
         }
 
-        public void FindDevices()
+        public MediaDevice[] FindDevices()
         {
             mediaDeviceCollection = ONVIFClient.GetAvailableMediaDevices();
 
-            //mainForm.BindMediaDeviceCollection(mediaDeviceCollection);
-
-            //MediaFormManager.UpdateControls();
+            return mediaDeviceCollection;
         }
 
         public event EventHandler Connected;
@@ -128,15 +126,11 @@ namespace TestOnvif
                 CaptureStoped(this, new EventArgs());
         }
 
-        public void Connect(MediaDevice device, string login, string password)
+        public bool Connect(MediaDevice device, string login, string password)
         {
             if (isConnected == false)
             {
                 device.ONVIFClient.Connect(login, password);
-
-                //deviceio.Profile[] profiles = device.ONVIFClient.MediaProfiles;
-
-               // mainForm.BindMediaProfileCollection(profiles);
 
                 mediaDevice = device;
 
@@ -146,7 +140,8 @@ namespace TestOnvif
 
             }
 
-           // MediaFormManager.UpdateControls();
+            return isConnected;
+
         }
 
         public void Disconnect() 
@@ -169,11 +164,10 @@ namespace TestOnvif
                 //...
             }
 
-            //MediaFormManager.UpdateControls();
         }
 
 
-        public void Start(deviceio.Profile profile)
+        public bool Start(deviceio.Profile profile)
         {
             if (isConnected == true && isStreaming == false)
             {
@@ -181,26 +175,9 @@ namespace TestOnvif
                 isStreaming = mediaDevice.Start();
 
                 OnCaptureStarted();
-
-                //string uri = mediaDevice.ONVIFClient.GetCurrentMediaProfileRtspStreamUri().AbsoluteUri;
-                //string filename = mediaDevice.AVProcessor.FFmpegMedia.OutputFilename;
-
-                //int width = mediaDevice.AVProcessor.InVideoParams.Width;
-                //int height = mediaDevice.AVProcessor.InVideoParams.Height;
-
-                //videoForm = new VideoForm(uri, filename, width, height);
-                //if (videoForm != null)
-                //{
-                //    mediaDevice.AVProcessor.ShowVideo += videoForm.ShowVideo;
-                //    mediaDevice.AVProcessor.PlayAudio += videoForm.PlayAudio;
-
-                //    MediaFormManager.AddForm(videoForm);
-
-                //    videoForm.Show();
-                //}
-                //MediaFormManager.UpdateControls();
-
             }
+
+            return isStreaming;
         }
 
         public void Stop()

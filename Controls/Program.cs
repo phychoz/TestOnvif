@@ -23,10 +23,10 @@ namespace Onvif.Controls
 
             try
             {
-                //MainForm form = MediaService.Instance.CreateMainForm();
-                //Logger.Verbose += form.Verbose;
+                MainForm form = MediaServiceController.Controller.CreateMainForm();
+                Logger.Verbose += form.Verbose;
 
-                Application.Run(new MainForm());
+                Application.Run(form);
             }
             catch (Exception e)
             {

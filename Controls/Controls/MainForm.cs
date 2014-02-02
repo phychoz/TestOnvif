@@ -70,7 +70,7 @@ namespace Onvif.Controls
 
             if (device != null)
             {
-                MediaService.Instance.Connect(device, "admin", "123456");
+                MediaServiceController.Controller.Connect(device, "admin", "123456");
             }
 
         }
@@ -82,7 +82,7 @@ namespace Onvif.Controls
 
             if (profile != null)
             {
-                MediaService.Instance.Start(profile);
+                MediaServiceController.Controller.Start(profile);
             }
         }
 
@@ -133,7 +133,7 @@ namespace Onvif.Controls
 
         private void VideoStopButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.Stop();
+            MediaServiceController.Controller.Stop();
         }
 
 
@@ -146,43 +146,44 @@ namespace Onvif.Controls
 
         private void FindDeviceButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.FindDevices();
+           // MediaService.Instance.FindDevices();
+            MediaServiceController.Controller.FindDevices();
         }
 
         private void setDateTimeButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.ExecuteCommand("SetDateTime");
+            //MediaService.Instance.ExecuteCommand("SetDateTime");
         }
 
         private void SetDateTimefromNtpButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.ExecuteCommand("SetDateTimefromNtp");
+            //MediaService.Instance.ExecuteCommand("SetDateTimefromNtp");
         }
         private void RebootButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.ExecuteCommand("Reboot");
+            //MediaService.Instance.ExecuteCommand("Reboot");
         }
 
         private void getDeviceInformationButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.ExecuteCommand("GetDeviceInformation");
+            //MediaService.Instance.ExecuteCommand("GetDeviceInformation");
         }
 
         private void GetSystemDateAndTimeButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.ExecuteCommand("GetSystemDateAndTime");
+            //MediaService.Instance.ExecuteCommand("GetSystemDateAndTime");
 
         }
 
         private void getHostnameButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.ExecuteCommand("GetHostname");
+            //MediaService.Instance.ExecuteCommand("GetHostname");
         }
         #endregion
 
         private void MediaClientGetProfilesButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.ExecuteCommand("MediaClientGetProfiles");
+            //MediaService.Instance.ExecuteCommand("MediaClientGetProfiles");
         }
 
         private void GetConfigurationButton_Click(object sender, EventArgs e)
@@ -212,7 +213,7 @@ namespace Onvif.Controls
         }
         private void WebButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.ExecuteCommand("ShowWebForm");
+            //MediaService.Instance.ExecuteCommand("ShowWebForm");
         }
 
         private void MediaProfileComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -224,13 +225,13 @@ namespace Onvif.Controls
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            MediaService.Instance.FindDevices();
+            //MediaService.Instance.FindDevices();
 
         }
 
         private void DisconnectButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.Disconnect();
+            //MediaService.Instance.Disconnect();
         }
     }
 
