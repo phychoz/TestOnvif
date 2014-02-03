@@ -7,9 +7,9 @@ using System.Net.NetworkInformation;
 
 namespace TestOnvif
 {
-    public class MediaStreamClient : MediaDeviceClient, IDisposable
+    public class MediaStreamAgent : MediaDeviceAgent, IDisposable
     {
-        public MediaStreamClient(MediaDevice device) : base(device) { }
+        public MediaStreamAgent(MediaDevice device) : base(device) { }
 
         private Uri mediaStreamUri;
 
@@ -17,6 +17,7 @@ namespace TestOnvif
 
         private RTSPChannel videoChannel;
         private RTSPChannel audioChannel;
+
         private SDP sdp;
 
         public Uri MediaStreamUri
@@ -43,7 +44,7 @@ namespace TestOnvif
             RTSPChannelParameters videoParameters = new RTSPChannelParameters {};
             RTSPChannelParameters audioParameters = new RTSPChannelParameters {};
 
-            rtspSession = RTSPSession.Open(this.MediaDevice.ONVIFClient.GetCurrentMediaProfileRtspStreamUri().AbsoluteUri);
+            rtspSession = RTSPSession.Open(this.MediaDevice.ONVIF.GetCurrentMediaProfileRtspStreamUri().AbsoluteUri);
             //rtspSession.RTSPServerResponse += new RTSPSession.RTSPResponseHandler(rtsp_RTSPServerResponse);
 
 
@@ -95,8 +96,11 @@ namespace TestOnvif
             videoChannel = new RTSPChannel(videoParameters);
             audioChannel = new RTSPChannel(audioParameters);
 
-            audioChannel.DataRecieved += MediaDevice.AVProcessor.AudioDataRecieved;
-            videoChannel.DataRecieved += MediaDevice.AVProcessor.VideoDataRecieved;
+            //audioChannel.DataRecieved += MediaDevice.AVProcessor.AudioDataRecieved;
+            //videoChannel.DataRecieved += MediaDevice.AVProcessor.VideoDataRecieved;
+
+            audioChannel.DataRecieved += MediaDevice.Decoder.AudioDataRecieved;
+            videoChannel.DataRecieved += MediaDevice.Decoder.VideoDataRecieved;
 
             videoChannel.StartRecieving();
             audioChannel.StartRecieving();
@@ -110,8 +114,11 @@ namespace TestOnvif
                 rtspSession.Close();
             }
 
-            audioChannel.DataRecieved -= MediaDevice.AVProcessor.AudioDataRecieved;
-            videoChannel.DataRecieved -= MediaDevice.AVProcessor.VideoDataRecieved;
+            audioChannel.DataRecieved -= MediaDevice.Decoder.AudioDataRecieved;
+            videoChannel.DataRecieved -= MediaDevice.Decoder.VideoDataRecieved;
+
+            //audioChannel.DataRecieved -= MediaDevice.AVProcessor.AudioDataRecieved;
+            //videoChannel.DataRecieved -= MediaDevice.AVProcessor.VideoDataRecieved;
 
             videoChannel.StopRecieving();
             audioChannel.StopRecieving();

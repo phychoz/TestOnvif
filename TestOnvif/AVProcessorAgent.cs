@@ -10,9 +10,147 @@ using System.IO;
 
 namespace TestOnvif
 {
-    public class AVProcessorClient : MediaDeviceClient
+    public class AVDecoderAgent : MediaDeviceAgent
     {
-        public AVProcessorClient(MediaDevice device) : base(device) { }
+        public AVDecoderAgent(MediaDevice device) : base(device) { }
+
+        public CodecParams DecoderParams { get; private set; }
+
+        public FFmpegMedia FFmpegDecoder {get ; private set;}
+
+        public void Start()
+        {
+            FFmpegDecoder = new FFmpegMedia();
+
+            FFmpegMedia.LogDataReceived += (log) => { Logger.Write(log, EnumLoggerType.LogFile); };
+
+            DecoderParams = MediaDevice.ONVIF.GetInputCodecParams();
+
+            FFmpegDecoder.VideoDecoderParams = DecoderParams;
+
+            FFmpegDecoder.VideoFrameReceived += ProcessVideoFrame;
+            FFmpegDecoder.AudioFrameReceived += ProcessAudioFrame;
+
+            FFmpegDecoder.Open();
+        }
+
+        public void Stop()
+        {
+            if (FFmpegDecoder != null)
+            {
+                FFmpegDecoder.VideoFrameReceived -= ProcessVideoFrame;
+                FFmpegDecoder.AudioFrameReceived -= ProcessAudioFrame;
+
+                FFmpegDecoder.Close();
+            }
+        }
+
+
+        public void VideoDataRecieved(IntPtr ptr, int size, bool key, uint pts)
+        {
+            FFmpegDecoder.VideoDataProcessing(ptr, size, key, pts);
+        }
+
+        public void AudioDataRecieved(IntPtr ptr, int size, bool key, uint pts)
+        {
+            FFmpegDecoder.AudioDataProcessing(ptr, size, false, pts);
+        }
+
+        private void ProcessVideoFrame(IntPtr data, int linesize, int width, int height, uint number, uint time, int flag)
+        {
+            //using (Bitmap bitmap = new Bitmap(DecoderParams.Width, DecoderParams.Height, linesize, PixelFormat.Format24bppRgb, data))
+            {
+                Bitmap bitmap = new Bitmap(DecoderParams.Width, DecoderParams.Height, linesize, PixelFormat.Format24bppRgb, data);
+                VideoFrameRecievedEventArgs args = new VideoFrameRecievedEventArgs { VideoFrame = new VideoFrame { Bitmap = bitmap, Timestamp = time, } };
+
+                OnVideoFrameRecievedEventHandler(args);
+            }
+        }
+
+        private void ProcessAudioFrame(IntPtr data, int linesize, uint time)
+        {
+            //...
+            AudioFrameRecievedEventArgs args = new AudioFrameRecievedEventArgs 
+            { 
+                AudioFrame = new AudioFrame 
+                { 
+                    AudioSample = new AudioSample 
+                    (
+                        data, 
+                        linesize
+                    ), 
+                    Timestamp=time 
+                } 
+            };
+
+            OnAudioFrameRecievedEventHandler(args);
+        }
+
+
+
+        public event EventHandler<VideoFrameRecievedEventArgs> VideoFrameRecievedEventHandler;
+        public event EventHandler<AudioFrameRecievedEventArgs> AudioFrameRecievedEventHandler;
+
+        private void OnVideoFrameRecievedEventHandler(VideoFrameRecievedEventArgs args)
+        {
+            if (VideoFrameRecievedEventHandler != null)
+            {
+                VideoFrameRecievedEventHandler(this, args);
+            }
+        }
+
+        private void OnAudioFrameRecievedEventHandler(AudioFrameRecievedEventArgs args)
+        {
+            if (AudioFrameRecievedEventHandler != null)
+            {
+                AudioFrameRecievedEventHandler(this, args);
+            }
+        }
+
+    }
+
+    public abstract class AVFrame
+    {
+        public DateTime Time { get; set; }
+        public uint Timestamp { get; set; }
+    }
+
+    public class VideoFrame : AVFrame
+    {
+        public Bitmap Bitmap {get; set;}
+    }
+
+    public class AudioFrame : AVFrame
+    {
+        public AudioSample AudioSample { get; set; }
+    }
+
+    public class AudioSample
+    {
+        public AudioSample(IntPtr Ptr, int Size)
+        {
+            this.Ptr = Ptr;
+            this.Size = Size;
+                
+        }
+        public IntPtr Ptr { get; set; }
+        public int Size { get; set; }
+    }
+
+    public class VideoFrameRecievedEventArgs : EventArgs
+    {        
+        public VideoFrame VideoFrame { get; set; }
+    }
+
+    public class AudioFrameRecievedEventArgs : EventArgs
+    {
+        public AudioFrame AudioFrame { get; set; }
+    }
+
+
+    public class AVProcessorAgent : MediaDeviceAgent
+    {
+        public AVProcessorAgent(MediaDevice device) : base(device) { }
 
         CodecParams inVideoParams;
 
@@ -61,6 +199,8 @@ namespace TestOnvif
 
         public void Start()
         {
+            Break = false;
+
             audioBuffer = new CircularBuffer<MediaData>();
             videoBuffer = new CircularBuffer<MediaData>();
 
@@ -68,7 +208,7 @@ namespace TestOnvif
 
             FFmpegMedia.LogDataReceived += (log) => { Logger.Write(log, EnumLoggerType.LogFile); };
 
-            inVideoParams = MediaDevice.ONVIFClient.GetInputCodecParams();
+            inVideoParams = MediaDevice.ONVIF.GetInputCodecParams();
 
             outVideoParams = new CodecParams(CodecType.MPEG4, inVideoParams.Width, inVideoParams.Height);
 
@@ -114,8 +254,9 @@ namespace TestOnvif
         {
             if (ffmpegMedia != null)
             {
-                audioBuffer.IsComplete = true;
-                videoBuffer.IsComplete = true;
+                //audioBuffer.IsComplete = true;
+                //videoBuffer.IsComplete = true;
+                Break = true;
 
                 videoEvent.Set();
                 audioEvent.Set();
@@ -139,7 +280,7 @@ namespace TestOnvif
 
             videoBuffer.Add(new MediaData() { Data = data, Size = linesize, Type = MediaType.Video, Time = time });
 
-            videoEvent.Set();
+            //videoEvent.Set();
             //Logger.Write(String.Format("{0}; {1}; {2}; {3}", time, videoBuffer.Count, videoBuffer.First().Time, videoBuffer.Last().Time), EnumLoggerType.FFmpegLog);
         }
 
@@ -147,62 +288,83 @@ namespace TestOnvif
         {
             audioBuffer.Add(new MediaData() { Data = data, Size = linesize, Type = MediaType.Audio, Time = time });
 
-            audioEvent.Set();
+            //audioEvent.Set();
         }
 
 
+
+        //public void ProcessAudio()
+        //{
+        //    while (true)
+        //    {
+        //        //audioEvent.WaitOne();
+
+        //        if (/*(audioBuffer.Count == 0) && */(audioBuffer.IsComplete == true))
+        //            break;
+        //        curAudioItem = audioBuffer.Get();
+        //        if (curAudioItem != null)//audioBuffer.TryGet(out curAudioItem) == true)
+        //        {
+        //            //lock (ffmpegMedia)
+        //            //{
+        //            //    ffmpegMedia.WriteAudioDataToFile(curAudioItem.Data, curAudioItem.Size, curAudioItem.Time, 0);
+        //            //}
+
+        //            OnPlayAudio(curAudioItem.Data, curAudioItem.Size);
+        //            //videoForm.PlayAudio(curAudioItem.Data, curAudioItem.Size);
+
+        //        }
+        //    }
+
+        //}
 
         public void ProcessAudio()
         {
             while (true)
             {
-                audioEvent.WaitOne();
-
-                if (/*(audioBuffer.Count == 0) && */(audioBuffer.IsComplete == true))
-                    break;
-                curAudioItem = audioBuffer.Get();
-                if (curAudioItem != null)//audioBuffer.TryGet(out curAudioItem) == true)
+                while (audioBuffer.IsComplete == false)
                 {
-                    //lock (ffmpegMedia)
-                    //{
-                    //    ffmpegMedia.WriteAudioDataToFile(curAudioItem.Data, curAudioItem.Size, curAudioItem.Time, 0);
-                    //}
+                    curAudioItem = audioBuffer.Get();
 
-                    OnPlayAudio(curAudioItem.Data, curAudioItem.Size);
-                    //videoForm.PlayAudio(curAudioItem.Data, curAudioItem.Size);
+                    if (curAudioItem != null)
+                    {
+                        OnPlayAudio(curAudioItem.Data, curAudioItem.Size);
+                    }
 
+                    if (Break == true) break;
                 }
-            }
 
+                Thread.Sleep(33);
+                //Thread.Yield();
+
+                if (Break == true) break;
+            }
         }
 
         public void ProcessVideo()
         {
             while (true)
             {
-                videoEvent.WaitOne();
-
-                if (/*(videoBuffer.Count == 0) &&*/ (videoBuffer.IsComplete == true))
-                    break;
-                curVideoItem = videoBuffer.Get();
-                if (curVideoItem != null) //videoBuffer.TryGet(out curVideoItem) == true)
+                while (videoBuffer.IsComplete == false)
                 {
-                    //lock (ffmpegMedia)
-                    //{
-                    //    ffmpegMedia.WriteVideoDataToFile(curVideoItem.Data, curVideoItem.Size, curVideoItem.Time, 0);
-                    //}
+                    curVideoItem = videoBuffer.Get();
 
-                    using (Bitmap bitmap = new Bitmap(inVideoParams.Width, inVideoParams.Height, curVideoItem.Size, PixelFormat.Format24bppRgb, curVideoItem.Data))
+                    if (curVideoItem != null)
                     {
-                        OnShowVideo(bitmap);
-                        //videoForm.ShowVideo(bitmap);
-                        //SaveImage(bitmap);
+                        using (Bitmap bitmap = new Bitmap(inVideoParams.Width, inVideoParams.Height, curVideoItem.Size, PixelFormat.Format24bppRgb, curVideoItem.Data))
+                        {
+                            OnShowVideo(bitmap);
+                        }
                     }
+
+                    if (Break == true) break;
                 }
-
+                Thread.Sleep(33);
+                //Thread.Yield();
+                if (Break == true) break;
             }
-
         }
+
+        private bool Break = false;
 
         DateTime prevRtpTime = DateTime.Now;
         DateTime currRtpTime = DateTime.Now;

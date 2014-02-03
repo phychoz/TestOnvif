@@ -5,38 +5,142 @@ using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace TestOnvif
 {
-    //public interface IMediaForm
-    //{
-    //    void UpdateControls();
-    //}
-
-    //interface IMediaFormManager
-    //{
-    //    void AddForm(IMediaForm form);
-    //    void RemoveForm(IMediaForm form);
-    //    void UpdateControls();
-    //}
-
-    public class MediaService : IDisposable// , IMediaFormManager
+    
+    public interface IMediaService 
     {
-        private static MediaService service = null;
-        //private MediaService()  { MediaFormManager = this; }
+        bool IsConnected { get;}
+        bool IsStreaming { get; }
+        object[] FindDevices();
+        bool Connect(MediaDevice device, string login, string password);
+        void Disconnect();
+        bool Start(deviceio.Profile profile);
+        void Stop();
+        object ExecuteCommand(string command, object[] parameters = null);
 
-        public static MediaService Instance
+        event EventHandler<VideoDataEventArgs> VideoDataReady;
+        event EventHandler<AudioDataEventArgs> AudioDataReady;
+    }
+
+    public class MediaDataEventArgs : EventArgs
+    {
+        public uint Timestamp { get; set; }
+        public DateTime Time { get; set; }
+    }
+
+    public class VideoDataEventArgs : MediaDataEventArgs
+    {
+        public Bitmap Bitmap { get; set; }
+    }
+    public class AudioDataEventArgs : MediaDataEventArgs
+    {
+        public IntPtr Ptr { get; set; }
+        public int Size { get; set; }
+    }
+
+
+    public class PresenterThread
+    {
+        public PresenterThread(MediaDevice device)
         {
-            get
+            this.device = device;
+        }
+
+        private MediaDevice device = null;
+        private Thread videoWorker;
+        private Thread audioWorker;
+
+        private bool Break = false;
+
+        public void Start()
+        {
+            videoWorker = new Thread(ProcessVideo);
+            audioWorker = new Thread(ProcessAudio);
+
+            videoWorker.Start();
+            audioWorker.Start();
+        }
+
+        public void Stop()
+        {
+            Break = true;
+
+            //videoWorker.Abort();
+            //audioWorker.Abort();
+
+            
+        }
+        public void ProcessAudio()
+        {
+            while (true)
             {
-                if (service == null)
+                while (device.AudioBufferIsComplete() == false)
                 {
-                    service = new MediaService();
+                    AudioFrame frame = device.GetAudioFrame();
+
+                    if (frame != null)
+                    {
+                        OnAudioFrameReadyEventHandler(frame);
+                    }
+
+                    if (Break == true) break;
                 }
-                return service;
+
+                Thread.Sleep(33);
+                //Thread.Yield();
+
+                if (Break == true) break;
             }
         }
 
+        public void ProcessVideo()
+        {
+            while (true)
+            {
+                while (device.VideoBufferIsComplete() == false)
+                {
+                    VideoFrame frame = device.GetVideoFrame();
+
+                    if (frame != null)
+                    {
+                        OnVideoFrameReadyEventHandler(frame);
+                    }
+
+                    if (Break == true) break;
+                }
+                Thread.Sleep(33);
+                //Console.WriteLine("Wait");
+                //Thread.Yield();
+                if (Break == true) break;
+            }
+        }
+
+        public event EventHandler<VideoFrameRecievedEventArgs> VideoFrameReadyEventHandler;
+        public event EventHandler<AudioFrameRecievedEventArgs> AudioFrameReadyEventHandler;
+
+        private void OnVideoFrameReadyEventHandler(VideoFrame frame)
+        {
+            if (VideoFrameReadyEventHandler != null)
+            {
+                VideoFrameReadyEventHandler(this, new VideoFrameRecievedEventArgs { VideoFrame = frame });
+            }
+        }
+
+        private void OnAudioFrameReadyEventHandler(AudioFrame frame)
+        {
+            if (AudioFrameReadyEventHandler != null)
+            {
+                AudioFrameReadyEventHandler(this, new AudioFrameRecievedEventArgs { AudioFrame = frame });
+            }
+        }
+
+    }
+
+    public class MediaService : IMediaService, IDisposable
+    {
         /// <summary>
         /// Колекция доступных ONVIF устройств
         /// </summary>
@@ -47,17 +151,11 @@ namespace TestOnvif
         /// </summary>
          MediaDevice mediaDevice;
 
-         //VideoForm videoForm;
-         //MainForm mainForm;
-
-         //IMediaFormManager MediaFormManager = null;
-         //List<IMediaForm> MediaForms = new List<IMediaForm>();
- 
 
         public MediaDevice[] MediaDeviceCollection
         {
             get { return mediaDeviceCollection; }
-            set { mediaDeviceCollection = value; }
+            private set { mediaDeviceCollection = value; }
         }
 
         public MediaDevice MediaDevice
@@ -66,14 +164,7 @@ namespace TestOnvif
             private set { mediaDevice = value; }
         }
 
-
-        //public MainForm CreateMainForm()
-        //{
-        //    mainForm =new MainForm();
-        //    MediaFormManager.AddForm(mainForm);
-
-        //    return mainForm;
-        //}
+        private PresenterThread presenter;
 
         private bool isConnected = false;
         private bool isStreaming = false;
@@ -81,56 +172,42 @@ namespace TestOnvif
         public bool IsConnected
         {
             get { return isConnected; }
-            set { isConnected = value; }
+            private set { isConnected = value; }
         }
 
         public bool IsStreaming
         {
             get { return isStreaming; }
-            set { isStreaming = value; }
+            private set { isStreaming = value; }
         }
 
-        public MediaDevice[] FindDevices()
+        public object[] FindDevices()
         {
-            mediaDeviceCollection = ONVIFClient.GetAvailableMediaDevices();
+            mediaDeviceCollection = ONVIFAgent.GetAvailableMediaDevices();
 
             return mediaDeviceCollection;
         }
 
-        public event EventHandler Connected;
-        public event EventHandler Disconnected;
-        public event EventHandler CaptureStarted;
-        public event EventHandler CaptureStoped;
+        public event EventHandler<VideoDataEventArgs> VideoDataReady;
+        public event EventHandler<AudioDataEventArgs> AudioDataReady;
 
-        private void OnConnected()
+        private void OnVideoDataReady(Bitmap bitmap)
         {
-            if (Connected != null)
-                Connected(this, new EventArgs ());
+            if (VideoDataReady != null)
+                VideoDataReady(this, new VideoDataEventArgs {Bitmap=bitmap });
         }
 
-        private void OnDisonnected()
+        private void OnAudioDataReady(IntPtr ptr, int size)
         {
-            if (Disconnected != null)
-                Disconnected(this, new EventArgs());
-        }
-
-        private void OnCaptureStarted()
-        {
-            if (CaptureStarted != null)
-                CaptureStarted(this, new EventArgs());
-        }
-
-        private void OnCaptureStoped()
-        {
-            if (CaptureStoped != null)
-                CaptureStoped(this, new EventArgs());
+            if (AudioDataReady != null)
+                AudioDataReady(this, new AudioDataEventArgs {Ptr=ptr, Size=size });
         }
 
         public bool Connect(MediaDevice device, string login, string password)
         {
             if (isConnected == false)
             {
-                device.ONVIFClient.Connect(login, password);
+                device.ONVIF.Connect(login, password);
 
                 mediaDevice = device;
 
@@ -171,214 +248,253 @@ namespace TestOnvif
         {
             if (isConnected == true && isStreaming == false)
             {
-                mediaDevice.ONVIFClient.CurrentMediaProfile = profile;
+                mediaDevice.ONVIF.CurrentMediaProfile = profile;
+                presenter = new PresenterThread(mediaDevice);
+                
+                presenter.VideoFrameReadyEventHandler+=new EventHandler<VideoFrameRecievedEventArgs>(presenter_VideoFrameReadyEventHandler);
+                presenter.AudioFrameReadyEventHandler+=new EventHandler<AudioFrameRecievedEventArgs>(presenter_AudioFrameReadyEventHandler);
+
+                
                 isStreaming = mediaDevice.Start();
+
+                presenter.Start();
+               
+                
+                //mediaDevice.Decoder.AudioFrameRecievedEventHandler+=new EventHandler<AudioFrameRecievedEventArgs>(Decoder_AudioFrameRecievedEventHandler);
+                //mediaDevice.Decoder.VideoFrameRecievedEventHandler+=new EventHandler<VideoFrameRecievedEventArgs>(Decoder_VideoFrameRecievedEventHandler);
+
+                //mediaDevice.AVProcessor.ShowVideo += AVProcessor_ShowVideo;
+                //mediaDevice.AVProcessor.PlayAudio += AVProcessor_PlayAudio;
 
                 OnCaptureStarted();
             }
 
             return isStreaming;
         }
+        private void presenter_VideoFrameReadyEventHandler(object sender, VideoFrameRecievedEventArgs e)
+        {
+            OnVideoDataReady(e.VideoFrame.Bitmap);
+            
+        }
+
+        private void presenter_AudioFrameReadyEventHandler(object sender, AudioFrameRecievedEventArgs e)
+        {
+            OnAudioDataReady(e.AudioFrame.AudioSample.Ptr, e.AudioFrame.AudioSample.Size);
+        }
+
+        private void AVProcessor_ShowVideo (Bitmap bitmap)
+        {
+            OnVideoDataReady(bitmap);
+        }
+
+        private void AVProcessor_PlayAudio(IntPtr ptr, int size)
+        {
+            OnAudioDataReady(ptr, size);
+        }
 
         public void Stop()
         {
             if (isConnected == true && isStreaming == true)
             {
+                if (presenter != null)
+                {
+                    presenter.VideoFrameReadyEventHandler += new EventHandler<VideoFrameRecievedEventArgs>(presenter_VideoFrameReadyEventHandler);
+                    presenter.AudioFrameReadyEventHandler += new EventHandler<AudioFrameRecievedEventArgs>(presenter_AudioFrameReadyEventHandler);
+
+                    presenter.Stop();
+                }
                 mediaDevice.Stop();
                 isStreaming = false;
 
-                OnCaptureStoped();
-                //if (videoForm != null)
-                //{
-                //    mediaDevice.AVProcessor.ShowVideo -= videoForm.ShowVideo;
-                //    mediaDevice.AVProcessor.PlayAudio -= videoForm.PlayAudio;
 
-                //    videoForm.Close();
-                //    MediaFormManager.RemoveForm(videoForm);
-                //};
+                //mediaDevice.Decoder.AudioFrameRecievedEventHandler -= new EventHandler<AudioFrameRecievedEventArgs>(Decoder_AudioFrameRecievedEventHandler);
+                //mediaDevice.Decoder.VideoFrameRecievedEventHandler -= new EventHandler<VideoFrameRecievedEventArgs>(Decoder_VideoFrameRecievedEventHandler);
 
-                //MediaFormManager.UpdateControls();
-                
+                //mediaDevice.AVProcessor.ShowVideo -= AVProcessor_ShowVideo;
+                //mediaDevice.AVProcessor.PlayAudio -= AVProcessor_PlayAudio;
+
+                OnCaptureStoped();               
             }
         }
 
-        //public void AddForm(IMediaForm form)
-        //{
-        //    MediaForms.Add(form);
-        //}
-
-        //public void RemoveForm(IMediaForm form)
-        //{
-        //    MediaForms.Remove(form);
-        //}
-
-        //public void UpdateControls()
-        //{
-        //    foreach (IMediaForm form in MediaForms)
-        //    {
-        //        form.UpdateControls();
-        //    }
-        //}
-
         public object ExecuteCommand(string command, object [] parameters=null)
         {
-            //if (IsConnected == true)
-            //{
-            //    switch (command)
-            //    {
-            //        case "GetDeviceInformation":
-            //            {
-            //                MessageBox.Show(mediaDevice.ONVIFClient.GetDeviceInformation());
-            //                break;
-            //            }
-            //        case "GetSystemDateAndTime":
-            //            {
-            //                string nowTimeString = DateTime.Now.ToString("HH:mm:ss.fff");
-
-            //                string mediaTimeString = string.Empty;
-
-            //                DateTime? media = mediaDevice.ONVIFClient.GetSystemDateAndTime();
-
-            //                if (media != null)
-            //                    mediaTimeString = ((DateTime)media).ToString("HH:mm:ss.fff");
-
-            //                string message = string.Format("now={0}; media={1}", nowTimeString, mediaTimeString);
-            //                Logger.Write(message, EnumLoggerType.Output);
-
-            //                break;
-            //            }
-            //        case "SetDateTime":
-            //            {
-            //                if (mediaDevice != null)
-            //                {
-            //                    BackgroundWorker worker = new BackgroundWorker();
-            //                    worker.DoWork += (obj, arg) =>
-            //                    {
-            //                        mediaDevice.ONVIFClient.SetSystemDateAndTime(DateTime.Now);
-            //                    };
-            //                    worker.RunWorkerCompleted += (obj, arg) =>
-            //                    {
-            //                        mainForm.Enabled = true;
-            //                        mainForm.Cursor = Cursors.Default;
-            //                    };
-            //                    worker.RunWorkerAsync();
-            //                    mainForm.Cursor = Cursors.WaitCursor;
-            //                    mainForm.Enabled = false;
-            //                }
-            //                break;
-            //            }
-            //        case "SetDateTimefromNtp":
-            //            {
-            //                if (mediaDevice != null)
-            //                {
-            //                    BackgroundWorker worker = new BackgroundWorker();
-            //                    worker.DoWork += (obj, arg) =>
-            //                    {
-            //                        mediaDevice.ONVIFClient.SetSystemDateAndTimeNTP("192.168.10.251", "UTC-4");
-            //                    };
-            //                    worker.RunWorkerCompleted += (obj, arg) =>
-            //                    {
-            //                        mainForm.Enabled = true;
-            //                        mainForm.Cursor = Cursors.Default;
-            //                    };
-
-            //                    worker.RunWorkerAsync();
-            //                    Logger.Write(String.Format("SetSystemDateAndTimeNTP"), EnumLoggerType.DebugLog);
-            //                    mainForm.Cursor = Cursors.WaitCursor;
-            //                    mainForm.Enabled = false;
-
-            //                }
-            //                break;
-            //            }
-            //        case "MediaClientGetProfiles":
-            //            {
-            //                MediaClientProfilesForm mcpf = new MediaClientProfilesForm(mediaDevice.ONVIFClient.MediaProfiles);
-            //                mcpf.ShowDialog();
-            //                break;
-            //            }
-            //        case "GetHostname":
-            //            {
-            //                MessageBox.Show(mediaDevice.ONVIFClient.GetHostname());
-            //                break;
-            //            }
-            //        case "Reboot":
-            //            {
-            //                if (MessageBox.Show("Reboot will take 2 minutes\nYou are sure that want to reboot device now?", "",
-            //                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-            //                {
-            //                    string message = mediaDevice.ONVIFClient.Reboot();
-            //                    using (RebootForm rf = new RebootForm(message))
-            //                    {
-            //                        //
-            //                        rf.ShowDialog();
-            //                    }
-            //                }
-            //                break;
-            //            }
-            //        default:
-            //            //...
-            //            break;
-            //    }
-            //}
-
-            //switch (command)
-            //{
-            //    case "WsDicovery":
-            //        {
-            //            BackgroundWorker worker = new BackgroundWorker();
-
-            //            worker.DoWork += (s, arg) =>
-            //            {
-            //                mediaDeviceCollection = ONVIFClient.GetAvailableMediaDevices();
-            //            };
-
-            //            worker.RunWorkerCompleted += (s, arg) =>
-            //            {
-            //                if (mediaDeviceCollection != null)
-            //                {
-            //                    DiscoverForm df = new DiscoverForm();
-            //                    df.ShowDialog();
-            //                }
-
-            //                mainForm.Cursor = Cursors.Default;
-            //                // WsDicoveryButton.Enabled = true;
-
-            //            };
-
-            //            worker.RunWorkerAsync();
-            //            //WsDicoveryButton.Enabled = false;
-            //            mainForm.Cursor = Cursors.WaitCursor;
-            //            break;
-            //        }
-            //    case "ShowWebForm":
-            //        {
-            //            WebForm form = new WebForm(new Uri(@"http://192.168.10.203/admin/index.html"));
-            //            form.Show();
-            //            break;
-            //        }
-            //    default:
-            //        //...
-            //        break;
-            //}
-
             return true;
         }
 
         public void Dispose()
         {
-            //if (videoForm != null)
-            //{
-            //    videoForm.Dispose();
-            //    videoForm = null;
-            //}
+            //...
+        }
 
-            //if (mainForm != null)
-            //{
-            //    mainForm.Dispose();
-            //    mainForm = null;
-            //}
+        public event EventHandler Connected;
+        public event EventHandler Disconnected;
+        public event EventHandler CaptureStarted;
+        public event EventHandler CaptureStoped;
+
+        private void OnConnected()
+        {
+            if (Connected != null)
+                Connected(this, new EventArgs());
+        }
+
+        private void OnDisonnected()
+        {
+            if (Disconnected != null)
+                Disconnected(this, new EventArgs());
+        }
+
+        private void OnCaptureStarted()
+        {
+            if (CaptureStarted != null)
+                CaptureStarted(this, new EventArgs());
+        }
+
+        private void OnCaptureStoped()
+        {
+            if (CaptureStoped != null)
+                CaptureStoped(this, new EventArgs());
         }
 
     }
 
 }
+
+//if (IsConnected == true)
+//{
+//    switch (command)
+//    {
+//        case "GetDeviceInformation":
+//            {
+//                MessageBox.Show(mediaDevice.ONVIFClient.GetDeviceInformation());
+//                break;
+//            }
+//        case "GetSystemDateAndTime":
+//            {
+//                string nowTimeString = DateTime.Now.ToString("HH:mm:ss.fff");
+
+//                string mediaTimeString = string.Empty;
+
+//                DateTime? media = mediaDevice.ONVIFClient.GetSystemDateAndTime();
+
+//                if (media != null)
+//                    mediaTimeString = ((DateTime)media).ToString("HH:mm:ss.fff");
+
+//                string message = string.Format("now={0}; media={1}", nowTimeString, mediaTimeString);
+//                Logger.Write(message, EnumLoggerType.Output);
+
+//                break;
+//            }
+//        case "SetDateTime":
+//            {
+//                if (mediaDevice != null)
+//                {
+//                    BackgroundWorker worker = new BackgroundWorker();
+//                    worker.DoWork += (obj, arg) =>
+//                    {
+//                        mediaDevice.ONVIFClient.SetSystemDateAndTime(DateTime.Now);
+//                    };
+//                    worker.RunWorkerCompleted += (obj, arg) =>
+//                    {
+//                        mainForm.Enabled = true;
+//                        mainForm.Cursor = Cursors.Default;
+//                    };
+//                    worker.RunWorkerAsync();
+//                    mainForm.Cursor = Cursors.WaitCursor;
+//                    mainForm.Enabled = false;
+//                }
+//                break;
+//            }
+//        case "SetDateTimefromNtp":
+//            {
+//                if (mediaDevice != null)
+//                {
+//                    BackgroundWorker worker = new BackgroundWorker();
+//                    worker.DoWork += (obj, arg) =>
+//                    {
+//                        mediaDevice.ONVIFClient.SetSystemDateAndTimeNTP("192.168.10.251", "UTC-4");
+//                    };
+//                    worker.RunWorkerCompleted += (obj, arg) =>
+//                    {
+//                        mainForm.Enabled = true;
+//                        mainForm.Cursor = Cursors.Default;
+//                    };
+
+//                    worker.RunWorkerAsync();
+//                    Logger.Write(String.Format("SetSystemDateAndTimeNTP"), EnumLoggerType.DebugLog);
+//                    mainForm.Cursor = Cursors.WaitCursor;
+//                    mainForm.Enabled = false;
+
+//                }
+//                break;
+//            }
+//        case "MediaClientGetProfiles":
+//            {
+//                MediaClientProfilesForm mcpf = new MediaClientProfilesForm(mediaDevice.ONVIFClient.MediaProfiles);
+//                mcpf.ShowDialog();
+//                break;
+//            }
+//        case "GetHostname":
+//            {
+//                MessageBox.Show(mediaDevice.ONVIFClient.GetHostname());
+//                break;
+//            }
+//        case "Reboot":
+//            {
+//                if (MessageBox.Show("Reboot will take 2 minutes\nYou are sure that want to reboot device now?", "",
+//                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+//                {
+//                    string message = mediaDevice.ONVIFClient.Reboot();
+//                    using (RebootForm rf = new RebootForm(message))
+//                    {
+//                        //
+//                        rf.ShowDialog();
+//                    }
+//                }
+//                break;
+//            }
+//        default:
+//            //...
+//            break;
+//    }
+//}
+
+//switch (command)
+//{
+//    case "WsDicovery":
+//        {
+//            BackgroundWorker worker = new BackgroundWorker();
+
+//            worker.DoWork += (s, arg) =>
+//            {
+//                mediaDeviceCollection = ONVIFClient.GetAvailableMediaDevices();
+//            };
+
+//            worker.RunWorkerCompleted += (s, arg) =>
+//            {
+//                if (mediaDeviceCollection != null)
+//                {
+//                    DiscoverForm df = new DiscoverForm();
+//                    df.ShowDialog();
+//                }
+
+//                mainForm.Cursor = Cursors.Default;
+//                // WsDicoveryButton.Enabled = true;
+
+//            };
+
+//            worker.RunWorkerAsync();
+//            //WsDicoveryButton.Enabled = false;
+//            mainForm.Cursor = Cursors.WaitCursor;
+//            break;
+//        }
+//    case "ShowWebForm":
+//        {
+//            WebForm form = new WebForm(new Uri(@"http://192.168.10.203/admin/index.html"));
+//            form.Show();
+//            break;
+//        }
+//    default:
+//        //...
+//        break;
+//}

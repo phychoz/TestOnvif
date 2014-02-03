@@ -8,12 +8,13 @@ using System.ServiceModel;
 using System.Net;
 using System.ServiceModel.Discovery;
 using System.Xml;
+using TestOnvif.Tools;
 
 namespace TestOnvif
 {
-    public class ONVIFClient : MediaDeviceClient
+    public class ONVIFAgent : MediaDeviceAgent
     {
-        public ONVIFClient(MediaDevice device) : base(device) { }
+        public ONVIFAgent(MediaDevice device) : base(device) { }
 
         deviceio.DeviceClient deviceioClient;
 
@@ -467,7 +468,7 @@ namespace TestOnvif
                 Uri uri = point.ListenUris.FirstOrDefault(u => u.HostNameType == UriHostNameType.IPv4);
                 if (uri != null)
                 {
-                    string name = ONVIFClient.GetDeviceInformation(uri);
+                    string name = ONVIFAgent.GetDeviceInformation(uri);
 
                     cameras.Add(new MediaDevice(name, uri));
                 }

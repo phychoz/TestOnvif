@@ -92,8 +92,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AVProcessorClient.cs" />
-    <Compile Include="RTSPChannel.cs" />
+    <Compile Include="AVProcessorAgent.cs" />
+    <Compile Include="StreamMedia\RTSP\RTSPChannel.cs" />
     <Compile Include="StreamMedia\RTP\RFCHandler.cs" />
     <Compile Include="StreamMedia\SDP\MediaDescription.cs" />
     <Compile Include="StreamMedia\SDP\SessionDescription.cs" />
@@ -101,11 +101,12 @@
     <Compile Include="Tools\CameraDateTime.cs" />
     <Compile Include="Tools\CircularBuffer.cs" />
     <Compile Include="MediaService.cs" />
-    <Compile Include="ONVIFClient.cs" />
-    <Compile Include="MediaStreamClient.cs" />
+    <Compile Include="ONVIFAgent.cs" />
+    <Compile Include="MediaStreamAgent.cs" />
     <Compile Include="StreamMedia\Audio\G711Decoder.cs" />
     <Compile Include="StreamMedia\Audio\WaveBuilder.cs" />
     <Compile Include="Tools\BigEndian.cs" />
+    <Compile Include="Tools\DeviceInformation.cs" />
     <Compile Include="Tools\Logger.cs" />
     <Compile Include="MediaDevice.cs" />
     <Compile Include="Tools\Security\PasswordDigestBehavior.cs" />

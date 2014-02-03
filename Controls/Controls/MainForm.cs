@@ -74,7 +74,10 @@ namespace Onvif.Controls
             }
 
         }
-
+        private void DisconnectButton_Click(object sender, EventArgs e)
+        {
+            MediaServiceController.Controller.Disconnect();
+        }
 
         private void VideoStartButton_Click(object sender, EventArgs e)
         {
@@ -88,11 +91,11 @@ namespace Onvif.Controls
 
         public void UpdateControls()
         {
-            if (MediaService.Instance.IsConnected == true)
+            if (MediaServiceController.Controller.IsConnected == true)
             {
                 UpdateControls(true);
 
-                if (MediaService.Instance.IsStreaming == true)
+                if (MediaServiceController.Controller.IsStreaming == true)
                 {
                     this.VideoStartButton.Enabled = false;
                     this.MediaProfileComboBox.Enabled = false;
@@ -141,7 +144,7 @@ namespace Onvif.Controls
 
         private void WsDicoveryButton_Click(object sender, EventArgs e)
         {
-            MediaService.Instance.ExecuteCommand("WsDicovery");
+            MediaServiceController.Controller.ExecuteCommand("WsDicovery");
         }
 
         private void FindDeviceButton_Click(object sender, EventArgs e)
@@ -229,10 +232,7 @@ namespace Onvif.Controls
 
         }
 
-        private void DisconnectButton_Click(object sender, EventArgs e)
-        {
-            //MediaService.Instance.Disconnect();
-        }
+
     }
 
 }

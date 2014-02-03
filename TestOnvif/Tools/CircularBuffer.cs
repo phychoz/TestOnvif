@@ -16,7 +16,9 @@ namespace TestOnvif
 
         private volatile int count;
 
-        private const int BUFFER_SIZE = 8;
+        private volatile bool isComplete;
+
+        private const int BUFFER_SIZE = 16;
 
         public int Count
         {
@@ -24,7 +26,7 @@ namespace TestOnvif
             private set { count = value; }
         }
 
-        private volatile bool isComplete;
+        
 
         public bool IsComplete
         {
@@ -42,11 +44,13 @@ namespace TestOnvif
 
         public void Add(T t)
         {
-            lock (locker)
+            //lock (locker)
             {
                 buffer[indexIn] = t;
                 indexIn = (indexIn + 1) % BUFFER_SIZE;
                 count = (count + 1) % BUFFER_SIZE;
+
+                isComplete = (indexIn == indexOut);
 
                 if (count == 0)
                     Logger.Write("Buffer full droping frames", EnumLoggerType.DebugLog);
@@ -56,13 +60,15 @@ namespace TestOnvif
         public bool TryGet(out T t)
         {
             t = new T();
-            lock (locker)
+            //lock (locker)
             {
                 if (count > 0)//(indexOut != (indexIn ))
                 {
                     t = buffer[indexOut];
                     indexOut = (indexOut + 1) % BUFFER_SIZE;
                     count = (count - 1) % BUFFER_SIZE;
+
+                    isComplete = (indexIn == indexOut);
 
                     return true;
                 }
@@ -75,13 +81,15 @@ namespace TestOnvif
 
         public T Get()
         {
-            lock (locker)
+            //lock (locker)
             {
                 if (count > 0)
                 {
                     int index = indexOut;
                     indexOut = (indexOut + 1) % BUFFER_SIZE;
                     count = (count - 1) % BUFFER_SIZE;
+
+                    isComplete = (indexIn == indexOut);
 
                     return buffer[index];
                 }

@@ -20,7 +20,7 @@ using Emgu.CV.VideoSurveillance;
 
 namespace TestOnvif
 {
-    public abstract class MediaDeviceClient
+    public abstract class MediaDeviceAgent
     {
         private MediaDevice mediaDevice;
 
@@ -29,7 +29,7 @@ namespace TestOnvif
             get { return mediaDevice; }
         }
 
-        public MediaDeviceClient(MediaDevice device)
+        public MediaDeviceAgent(MediaDevice device)
         {
             this.mediaDevice = device;
         }
@@ -42,9 +42,11 @@ namespace TestOnvif
             MediaDeviceUri = uri;
             DisplayName = name;
 
-            mediaStreamClient = new MediaStreamClient(this);
-            onvifClient = new ONVIFClient(this);
-            avProcessorClient = new AVProcessorClient(this);
+            mediaStream = new MediaStreamAgent(this);
+            onvif = new ONVIFAgent(this);
+            //avProcessor = new AVProcessorAgent(this);
+
+            Decoder = new AVDecoderAgent(this);
         }
 
         private string displayName = string.Empty;
@@ -52,44 +54,89 @@ namespace TestOnvif
         public string DisplayName
         {
             get { return displayName; }
-            set { displayName = value; }
+            private set { displayName = value; }
         }
 
         private Uri mediaDeviceUri;
 
-        private MediaStreamClient mediaStreamClient;
-        private ONVIFClient onvifClient;
+        private MediaStreamAgent mediaStream;
+        private ONVIFAgent onvif;
 
-        private AVProcessorClient avProcessorClient;
+        public  AVDecoderAgent Decoder {get; private set;}
 
-        public AVProcessorClient AVProcessor
+        //private AVProcessorAgent avProcessor;
+
+        //public AVProcessorAgent AVProcessor
+        //{
+        //    get { return avProcessor; }
+        //    private set { avProcessor = value; }
+        //}
+
+        public MediaStreamAgent MediaStream
         {
-            get { return avProcessorClient; }
-            set { avProcessorClient = value; }
-        }
-
-        public MediaStreamClient streamClient
-        {
-            get { return mediaStreamClient; }
-            set { mediaStreamClient = value; }
+            get { return mediaStream; }
+            private set { mediaStream = value; }
         }
 
         public Uri MediaDeviceUri
         {
             get { return mediaDeviceUri; }
-            set { mediaDeviceUri = value; }
+            private set { mediaDeviceUri = value; }
         }
 
-        public ONVIFClient ONVIFClient
+        public ONVIFAgent ONVIF
         {
-            get { return onvifClient; }
-            set { onvifClient = value; }
+            get { return onvif; }
+            private set { onvif = value; }
+        }
+
+
+        private CircularBuffer<VideoFrame> videoBuffer;
+        private CircularBuffer<AudioFrame> audioBuffer;
+
+        public bool AudioBufferIsComplete()
+        {
+            bool Result = false;
+            if (audioBuffer != null)
+            {
+                Result= audioBuffer.IsComplete;
+            }
+            return Result;
+
+        }
+
+        public bool VideoBufferIsComplete()
+        {
+            bool Result = false;
+            if (videoBuffer != null)
+            {
+                Result = videoBuffer.IsComplete;
+            }
+            return Result;
+        }
+
+        public AudioFrame GetAudioFrame()
+        {
+            return audioBuffer.Get();
+        }
+
+        public VideoFrame GetVideoFrame()
+        {
+            return videoBuffer.Get();
         }
 
         public bool Start()
         {
-            avProcessorClient.Start();
-            mediaStreamClient.Start();
+            audioBuffer = new CircularBuffer<AudioFrame>();
+            videoBuffer = new CircularBuffer<VideoFrame>();
+
+            Decoder.AudioFrameRecievedEventHandler += new EventHandler<AudioFrameRecievedEventArgs>(Decoder_AudioFrameRecievedEventHandler);
+            Decoder.VideoFrameRecievedEventHandler += new EventHandler<VideoFrameRecievedEventArgs>(Decoder_VideoFrameRecievedEventHandler);
+
+            //avProcessor.Start();
+            Decoder.Start();
+
+            mediaStream.Start();
 
             return true;
         }
@@ -97,8 +144,27 @@ namespace TestOnvif
 
         public void Stop()
         {
-            mediaStreamClient.Stop();
-            avProcessorClient.Stop();
+            mediaStream.Stop();
+
+            Decoder.AudioFrameRecievedEventHandler -= new EventHandler<AudioFrameRecievedEventArgs>(Decoder_AudioFrameRecievedEventHandler);
+            Decoder.VideoFrameRecievedEventHandler -= new EventHandler<VideoFrameRecievedEventArgs>(Decoder_VideoFrameRecievedEventHandler);
+
+            Decoder.Stop();
+
+            //avProcessor.Stop();
+        }
+
+        private void Decoder_VideoFrameRecievedEventHandler(object sender, VideoFrameRecievedEventArgs e)
+        {
+            //...
+            videoBuffer.Add(e.VideoFrame);
+
+        }
+
+        private void Decoder_AudioFrameRecievedEventHandler(object sender, AudioFrameRecievedEventArgs e)
+        {
+            //..
+            audioBuffer.Add(e.AudioFrame);
         }
 
     }
@@ -113,46 +179,5 @@ namespace TestOnvif
         public MediaType Type { get; set; }
     }
 
-    public class DeviceInformation
-    {
-        string hostName = String.Empty;
-
-        public string HostName
-        {
-            get { return hostName; }
-            set { hostName = value; }
-        }
-        string firmware = String.Empty;
-
-        public string Firmware
-        {
-            get { return firmware; }
-            set { firmware = value; }
-        }
-
-        string serial = String.Empty;
-
-        public string Serial
-        {
-            get { return serial; }
-            set { serial = value; }
-        }
-        string hardware = String.Empty;
-
-        public string Hardware
-        {
-            get { return hardware; }
-            set { hardware = value; }
-        }
-
-        string model = String.Empty;
-
-        public string Model
-        {
-            get { return model; }
-            set { model = value; }
-        }
-
-    }
 
 }

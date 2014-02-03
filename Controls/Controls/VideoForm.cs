@@ -43,6 +43,15 @@ namespace Onvif.Controls
 
             this.MouseClick +=new MouseEventHandler(VideoForm_MouseClick);
 
+            MediaServiceController.Controller.VideoDataReady+=new EventHandler<VideoDataEventArgs>(Controller_VideoDataReady);
+            MediaServiceController.Controller.AudioDataReady +=new EventHandler<AudioDataEventArgs>(Controller_AudioDataReady);
+
+            this.FormClosed += (o, a) => 
+            {
+                MediaServiceController.Controller.VideoDataReady -= new EventHandler<VideoDataEventArgs>(Controller_VideoDataReady);
+                MediaServiceController.Controller.AudioDataReady -= new EventHandler<AudioDataEventArgs>(Controller_AudioDataReady);
+            };
+
          }
 
         public void UpdateCapture(string capture)
@@ -60,26 +69,21 @@ namespace Onvif.Controls
             }
         }
 
+        private void Controller_VideoDataReady(object sender, VideoDataEventArgs e)
+        {
+            ShowVideo(e.Bitmap);
+        }
+
+        private void Controller_AudioDataReady(object sender, AudioDataEventArgs e)
+        {
+            PlayAudio(e.Ptr, e.Size);
+        }
+
+
         public void PlayAudio(IntPtr data, int size)
         {
             audioPlayer.PlayFromMemory(data, size);
         }
-
-
-        //public void ShowVideo(Emgu.CV.IImage image)
-        //{
-        //    if (this.InvokeRequired)
-        //        this.Invoke((Action)(() =>
-        //        {
-        //            imageBox1.Image = image;
-
-        //        }));
-        //    else
-        //    {
-        //        imageBox1.Image = image;
-        //    }
-        //}
-
 
         public void ShowVideo(Bitmap bmp)
         {
@@ -113,9 +117,9 @@ namespace Onvif.Controls
 
         public void UpdateControls()
         {
-            if (MediaService.Instance.IsConnected == true)
+            if (MediaServiceController.Controller.IsConnected == true)
             {
-                if (MediaService.Instance.IsStreaming == true)
+                if (MediaServiceController.Controller.IsStreaming == true)
                 {
                     //this.Show();
                 }
@@ -135,10 +139,10 @@ namespace Onvif.Controls
         public void VideoForm_MouseWheel(object sender, MouseEventArgs e)
         {
             if (e.Delta < 0)
-                ThreadPool.QueueUserWorkItem(new WaitCallback((obj) => { MediaService.Instance.MediaDevice.ONVIFClient.MoveAndZoomCamera20(0F, 0F, -0.7F); }));
+                ThreadPool.QueueUserWorkItem(new WaitCallback((obj) => { MediaServiceController.Controller.ONVIF.MoveAndZoomCamera20(0F, 0F, -0.7F); }));
 
             if (e.Delta > 0)
-                ThreadPool.QueueUserWorkItem(new WaitCallback((obj) => { MediaService.Instance.MediaDevice.ONVIFClient.MoveAndZoomCamera20(0F, 0F, 0.7F); }));
+                ThreadPool.QueueUserWorkItem(new WaitCallback((obj) => { MediaServiceController.Controller.ONVIF.MoveAndZoomCamera20(0F, 0F, 0.7F); }));
         }
 
         public void VideoForm_MouseClick(object sender, MouseEventArgs e)
@@ -149,7 +153,7 @@ namespace Onvif.Controls
             float pan = 2 * (float)(e.X - centerPan) / (float)this.Width;
             float tilt = 2 * (float)(centerTilt - e.Y) / (float)this.Height;
 
-            ThreadPool.QueueUserWorkItem(new WaitCallback((obj) => { MediaService.Instance.MediaDevice.ONVIFClient.MoveAndZoomCamera20(pan, tilt, 0); }));
+            ThreadPool.QueueUserWorkItem(new WaitCallback((obj) => { MediaServiceController.Controller.ONVIF.MoveAndZoomCamera20(pan, tilt, 0); }));
         }
 
     }

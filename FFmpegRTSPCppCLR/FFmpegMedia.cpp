@@ -93,7 +93,7 @@ namespace FFmpegWrapper
 
 		InputInit();
 
-		OutputInit();
+		//OutputInit();
 	}
 
 #pragma endregion
@@ -582,7 +582,7 @@ namespace FFmpegWrapper
 			VideoFrameReceived((IntPtr)(dec_rgb_frame->data[0]), dec_rgb_frame->linesize[0], 
 				in_video_codec_context->width, in_video_codec_context->height , 
 				0,
-				videoCounter->TimeInterval, packet.flags);//, in_video_codec_context->width, in_video_codec_context->height);
+				videoCounter->TimeInterval, packet.flags); //, in_video_codec_context->width, in_video_codec_context->height);
 		}
 
 		videoCounter->ReceivedFrameCount++;
@@ -811,9 +811,9 @@ namespace FFmpegWrapper
 		av_free(enc_audio_frame);
 		av_free(dec_audio_frame);
 
-		av_write_trailer(out_format_context);
-		avcodec_close(out_video_codec_context);
-		avio_close(out_format_context->pb);
+		//av_write_trailer(out_format_context);
+		//avcodec_close(out_video_codec_context);
+		//avio_close(out_format_context->pb);
 
 		avcodec_close(in_video_codec_context);
 

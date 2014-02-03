@@ -80,7 +80,7 @@ namespace TestOnvif
             offset += 4;
             packet.SSRC = BigEndian.ReadUInt32((void*)(data + offset));
 
-            //if (packet.SSRC != SSRC) return; // пакеты другой сессии
+            if (packet.SSRC != SSRC) return; // пакеты другой сессии
 
             if (packet.HasExtension)
             {
