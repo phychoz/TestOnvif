@@ -5,13 +5,13 @@
 //#pragma comment (lib, "C:\\ffmpeg\\lib\\avformat.lib")
 //#pragma comment (lib, "C:\\ffmpeg\\lib\\avutil.lib")
 
-#pragma comment (lib, "C:\\FFmpeg2\\lib\\avcodec.lib")
-#pragma comment (lib, "C:\\FFmpeg2\\lib\\swscale.lib")
-#pragma comment (lib, "C:\\FFmpeg2\\lib\\avformat.lib")
-#pragma comment (lib, "C:\\FFmpeg2\\lib\\avutil.lib")
-
-#pragma comment (lib, "C:\\SDL\\lib\\x86\\SDL.lib")
-#pragma comment (lib, "C:\\SDL\\lib\\x86\\SDLmain.lib")
+//#pragma comment (lib, "C:\\FFmpeg2\\lib\\avcodec.lib")
+//#pragma comment (lib, "C:\\FFmpeg2\\lib\\swscale.lib")
+//#pragma comment (lib, "C:\\FFmpeg2\\lib\\avformat.lib")
+//#pragma comment (lib, "C:\\FFmpeg2\\lib\\avutil.lib")
+//
+//#pragma comment (lib, "C:\\SDL\\lib\\x86\\SDL.lib")
+//#pragma comment (lib, "C:\\SDL\\lib\\x86\\SDLmain.lib")
 
 extern "C" 
 {
