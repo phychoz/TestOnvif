@@ -6,6 +6,9 @@ using System.Windows.Forms;
 using System.Threading;
 using System.ComponentModel;
 using System.Drawing;
+using System.Diagnostics;
+using Emgu.CV;
+using Emgu.CV.Structure;
 
 namespace TestOnvif
 {
@@ -73,10 +76,12 @@ namespace TestOnvif
 
             
         }
+        Stopwatch videoStopWatch = new Stopwatch();
         public void ProcessAudio()
         {
             while (true)
             {
+
                 while (device.AudioBufferIsComplete() == false)
                 {
                     AudioFrame frame = device.GetAudioFrame();
@@ -87,12 +92,15 @@ namespace TestOnvif
                     }
 
                     if (Break == true) break;
+
+                    Thread.Sleep(1);
                 }
 
-                Thread.Sleep(33);
+                Thread.Sleep(15);
                 //Thread.Yield();
 
                 if (Break == true) break;
+
             }
         }
 
@@ -100,21 +108,33 @@ namespace TestOnvif
         {
             while (true)
             {
+                videoStopWatch.Restart();
+
                 while (device.VideoBufferIsComplete() == false)
                 {
                     VideoFrame frame = device.GetVideoFrame();
 
                     if (frame != null)
                     {
+                        //Bitmap bitmap = ProcessFrame(frame.Bitmap);
+
+                        //frame.Bitmap = bitmap;
                         OnVideoFrameReadyEventHandler(frame);
                     }
 
                     if (Break == true) break;
+
+                    Thread.Sleep(1);
                 }
-                Thread.Sleep(33);
+                Thread.Sleep(15);
                 //Console.WriteLine("Wait");
                 //Thread.Yield();
                 if (Break == true) break;
+
+                long msec = videoStopWatch.ElapsedMilliseconds;
+
+                //if(msec>0)
+                //Console.WriteLine("video = {0},", msec);
             }
         }
 
@@ -135,6 +155,87 @@ namespace TestOnvif
             {
                 AudioFrameReadyEventHandler(this, new AudioFrameRecievedEventArgs { AudioFrame = frame });
             }
+        }
+
+        private bool prevLEDStatus = false;
+        private bool currLEDStatus = false;
+
+        private Bitmap ProcessFrame(Bitmap bitmap)
+        {
+            
+            Image<Bgr, Byte> frame = new Image<Bgr,byte>(bitmap); //capture.QueryFrame();//RetrieveBgrFrame();
+            
+            //if (frame == null) return;
+
+            //Image<Gray, Byte> smallGrayFrame = grayFrame.PyrDown();
+            //Image<Gray, Byte> smoothedGrayFrame = smallGrayFrame.PyrUp();
+            //Image<Gray, Byte> cannyFrame = smoothedGrayFrame.Canny(new Gray(100), new Gray(60));
+
+            Image<Gray, Byte> smooth = frame.SmoothBlur(1, 1).Convert<Gray, Byte>();
+
+            //Image<Gray, Byte> smoothImage = frame.Convert<Gray, Byte>();
+
+            //smoothImage._EqualizeHist();
+            //smoothImage._GammaCorrect(10.0d);
+
+            Image<Gray, Byte> threshold = smooth.ThresholdBinary(new Gray(240), new Gray(255));
+
+            Image<Gray, Byte> canny = threshold.Canny(new Gray(255), new Gray(255));
+
+            Contour<Point> largestContour = null;
+            double largestArea = 0;
+            currLEDStatus = false;
+
+            for (Contour<System.Drawing.Point> contours = canny.FindContours(
+                      Emgu.CV.CvEnum.CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE,
+                      Emgu.CV.CvEnum.RETR_TYPE.CV_RETR_EXTERNAL); contours != null; contours = contours.HNext)
+            {
+                Point pt = new Point(contours.BoundingRectangle.X, contours.BoundingRectangle.Y);
+                //draw.Draw(new CircleF(pt, 5), new Gray(255), 0);
+
+                if (contours.Area > largestArea)
+                {
+                    largestArea = contours.Area;
+                    largestContour = contours;
+                }
+
+                canny.Draw(contours.BoundingRectangle, new Gray(255), 1);
+                //frame.Draw(contours.BoundingRectangle, new Bgr(Color.Red), 3);
+
+                if (largestContour != null)
+                {
+                    frame.Draw(largestContour.BoundingRectangle, new Bgr(Color.Red), 2);
+
+                    currLEDStatus = true;
+
+                    string message = string.Format("{0}, Area={1}", "LargestContour", largestContour.Area);
+
+                    //OnVerbose(message);
+
+                }
+            }
+
+            if (currLEDStatus != prevLEDStatus)
+            {
+                //string message = String.Format("LED Status = {0}", currLEDStatus ? "ON" : "OFF");
+
+                if (currLEDStatus == true)
+                {
+                    string message = string.Format("{0:HH:mm:ss.fff}", DateTime.Now);
+                    Logger.Write(message, EnumLoggerType.Output);
+                }
+                //OnVerbose(message);
+
+                //OnLEDStatusChanged(currLEDStatus);
+            }
+
+            prevLEDStatus = currLEDStatus;
+
+            //OnImageProcessed(frame, smooth, threshold, canny);
+
+            //form.DrawFrame(frame);
+
+            return frame.Bitmap;
         }
 
     }
@@ -298,8 +399,8 @@ namespace TestOnvif
             {
                 if (presenter != null)
                 {
-                    presenter.VideoFrameReadyEventHandler += new EventHandler<VideoFrameRecievedEventArgs>(presenter_VideoFrameReadyEventHandler);
-                    presenter.AudioFrameReadyEventHandler += new EventHandler<AudioFrameRecievedEventArgs>(presenter_AudioFrameReadyEventHandler);
+                    presenter.VideoFrameReadyEventHandler -= new EventHandler<VideoFrameRecievedEventArgs>(presenter_VideoFrameReadyEventHandler);
+                    presenter.AudioFrameReadyEventHandler -= new EventHandler<AudioFrameRecievedEventArgs>(presenter_AudioFrameReadyEventHandler);
 
                     presenter.Stop();
                 }

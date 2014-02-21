@@ -18,7 +18,7 @@ namespace TestOnvif
 
         private volatile bool isComplete;
 
-        private const int BUFFER_SIZE = 16;
+        private const int BUFFER_SIZE = 4;
 
         public int Count
         {

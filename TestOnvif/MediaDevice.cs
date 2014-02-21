@@ -145,11 +145,12 @@ namespace TestOnvif
         public void Stop()
         {
             mediaStream.Stop();
+            Decoder.Stop();
 
             Decoder.AudioFrameRecievedEventHandler -= new EventHandler<AudioFrameRecievedEventArgs>(Decoder_AudioFrameRecievedEventHandler);
             Decoder.VideoFrameRecievedEventHandler -= new EventHandler<VideoFrameRecievedEventArgs>(Decoder_VideoFrameRecievedEventHandler);
 
-            Decoder.Stop();
+            
 
             //avProcessor.Stop();
         }
